@@ -27,10 +27,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_HOST_USER = 'somanarupesh32@gmail.com'
+EMAIL_HOST_PASSWORD = 'rupesh0422'
+EMAIL_PORT = 587
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    'login_signup',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +61,7 @@ ROOT_URLCONF = 'securestore.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,3 +125,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_URL = '/login_signup/login/'
