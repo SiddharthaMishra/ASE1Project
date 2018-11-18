@@ -23,5 +23,5 @@ urlpatterns = [
     path('', include('blog.urls')),
     path('', include('DispFile.urls')),
     path('', include('login_signup.urls')),
-    path('mainupload', 'mainupload.urls'),
+    path('mainupload', include('mainupload.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
