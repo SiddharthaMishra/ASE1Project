@@ -15,18 +15,23 @@ from django.core.mail import EmailMessage
 from .models import UserData
 import requests
 
-# from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.decorators import login_required
 
 def main(request):
-    return render(request, 'login_signup/index.html')
+    print(request.user.is_authenticated)
+    print("asdasdasdasdasdasd")
+    if request.user.is_authenticated:
+        return redirect(reverse('login_signup:home'))
+    return render(request, 'login_signup:main')
 
+@login_required
 def home(request):
-    return render(request, 'LoginHome.html')
+    return render(request, 'LoginBase.html')
 
 def user_logout(request):
+    print("asdasdasdasdsa")
     logout(request)
-    return HttpResponseRedirect(reverse('main'))
+    return HttpResponseRedirect(reverse('login_signup:main'))
 
 
 def signup(request):
@@ -111,7 +116,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('home'))
+                return redirect(reverse('login_signup:home'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
