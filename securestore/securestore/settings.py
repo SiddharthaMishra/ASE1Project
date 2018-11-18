@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
     'login_signup.apps.LoginSignupConfig',
+    'DispFile'
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+LOGIN_URL = 'login_signup/login/'
+LOGIN_REDIRECT_URL = 'login_signup/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
