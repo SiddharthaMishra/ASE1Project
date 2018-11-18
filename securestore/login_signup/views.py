@@ -15,14 +15,14 @@ from django.core.mail import EmailMessage
 from .models import UserData
 import requests
 
-
 # from django.contrib.auth.decorators import login_required
 
 
 def main(request):
     return render(request, 'login_signup/index.html')
 
-
+def home(request):
+    return render(request, 'DispFile/LoginHome.html')
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('main'))
@@ -95,7 +95,7 @@ def activate(request, uidb64, token):
         user.save()
         # login(request, user)
         # return redirect('home')
-        return render(request, 'login_signup/index.html ', {})
+        return render(request, 'DispFile/LoginHome.html', {})
         # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
         # return render(request, 'login.html', {'form': form})
     else:
@@ -110,7 +110,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('login_signup:main'))
+                return HttpResponseRedirect(reverse('DispFile:home'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:

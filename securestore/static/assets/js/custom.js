@@ -1,28 +1,21 @@
 
-
-
-
 (function( $ ){
 
-
-	/* ----------------------------------------------------------- */
-	/*  2. FIXED MENU
-	/* ----------------------------------------------------------- */
+	/* FIXED MENU*/
 
 
 	jQuery(window).bind('scroll', function () {
     if ($(window).scrollTop() > 150) {
-        $('#mu-header').addClass('mu-fixed-nav');
+        $('#header').addClass('mu-fixed-nav');
 
 	    } else {
-	        $('#mu-header').removeClass('mu-fixed-nav');
+	        $('#header').removeClass('mu-fixed-nav');
 	    }
 	});
 
 
-	/* ----------------------------------------------------------- */
-	/*  2. FEATURED SLIDE (SLICK SLIDER)
-	/* ----------------------------------------------------------- */
+
+/* FEATURED SLIDE (SLICK SLIDER) */
 
 		$('.mu-featured-slide').slick({
 		  arrows: false,
@@ -33,15 +26,6 @@
 		  cssEase: 'linear'
 		});
 
-
-
-	/* ----------------------------------------------------------- */
-	/*  3. MENU SMOOTH SCROLLING
-	/* ----------------------------------------------------------- */
-
-		//MENU SCROLLING WITH ACTIVE ITEM SELECTED
-
-		// Cache selectors
 		var lastId,
 		topMenu = $(".mu-menu"),
 		topMenuHeight = topMenu.outerHeight()+13,

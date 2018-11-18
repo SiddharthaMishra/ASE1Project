@@ -22,7 +22,7 @@ import login_signup
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
-
+    path('', include('DispFile.urls')),
     path('', include('login_signup.urls')),
 ]
 
