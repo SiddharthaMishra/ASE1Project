@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'mainupload',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,6 +124,6 @@ STATIC_URL = '/static/'
 
 # Media files
 
-MEDIA_ROOT = '/media/'
+MEDIA_ROOT = 'media/'
 
-MEDIA_URL = '/media/'
+MEDIA_URL = os.path.join(BASE_DIR, "media/")

@@ -8,17 +8,26 @@ from django.contrib.contenttypes.models import ContentType
 
 class RootDirectory(models.Model):
     User = models.OneToOneField(User, on_delete=models.CASCADE)
-    children = GenericRelation('Directory')
+    children = GenericRelation('Directory', related_query_name='dirs')
+    files = GenericRelation('File', related_query_name='all_files')
 
 
 class Directory(models.Model):
     name = models.CharField(max_length=30)
 
-    children = GenericRelation('self')
+    children = GenericRelation('self', related_query_name='dirs')
+    files = GenericRelation('File', related_query_name='all_files')
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     parent = GenericForeignKey('content_type', 'object_id')
+
+    def get_user(self):
+        dir = self.directory
+        while not isinstance(dir, RootDirectory):
+            dir = dir.parent
+
+        return dir.User
 
 
 class File(models.Model):
@@ -26,3 +35,10 @@ class File(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     directory = GenericForeignKey('content_type', 'object_id')
+
+    def get_user(self):
+        dir = self.directory
+        while not isinstance(dir, RootDirectory):
+            dir = dir.parent
+
+        return dir.User
