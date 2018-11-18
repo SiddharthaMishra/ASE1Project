@@ -71,8 +71,8 @@ hr {
     {% csrf_token %}
     {{ user_form.as_p }}
     <div class="clearfix">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   <button type="submit" onsubmit=location.href="{% url 'login_signup:main'%}">Sign Up</button>"
-        <button type="button" onclick=location.href="{% url 'login_signup:main' %}"  class="cancelbtn">Cancel</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   <button type="submit" onsubmit=location.href="{% url 'login_signup:home'%}">Sign Up</button>"
+        <button type="button" onclick=location.href="{% url 'login_signup:home' %}"  class="cancelbtn">Cancel</button>
         &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;
 
 

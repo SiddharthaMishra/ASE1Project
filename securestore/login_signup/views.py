@@ -17,22 +17,12 @@ import requests
 
 from django.contrib.auth.decorators import login_required
 
-def main(request):
-    print(request.user.is_authenticated)
-    print("asdasdasdasdasdasd")
-    if request.user.is_authenticated:
-        return redirect(reverse('login_signup:home'))
-    return render(request, 'login_signup:main')
-
 @login_required
 def home(request):
     return render(request, 'LoginBase.html')
-
 def user_logout(request):
-    print("asdasdasdasdsa")
     logout(request)
-    return HttpResponseRedirect(reverse('login_signup:main'))
-
+    return HttpResponseRedirect(reverse('login_signup:home'))
 
 def signup(request):
     registered = False
@@ -101,7 +91,7 @@ def activate(request, uidb64, token):
         user.save()
         # login(request, user)
         # return redirect('home')
-        return render(request, 'DispFile/LoginHome.html', {})
+        return render(request, 'LoginHome.html', {})
         # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
         # return render(request, 'login.html', {'form': form})
     else:
