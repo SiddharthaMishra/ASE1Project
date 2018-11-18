@@ -22,7 +22,8 @@ def main(request):
     return render(request, 'login_signup/index.html')
 
 def home(request):
-    return render(request, 'DispFile/LoginHome.html')
+    return render(request, 'LoginHome.html')
+
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('main'))
@@ -110,7 +111,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('DispFile:home'))
+                return HttpResponseRedirect(reverse('home'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
