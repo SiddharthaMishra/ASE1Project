@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
     'login_signup.apps.LoginSignupConfig',
+    'feedback.apps.FeedbackConfig'
 ]
 
 MIDDLEWARE = [

@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('blog.urls')),
     path('', include('mainupload.urls')),
     path('', include('login_signup.urls')),
+    path('feedback/', include('feedback.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
