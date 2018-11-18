@@ -6,7 +6,6 @@
 <p>Files</p>
 <hr>
 <div class="row" id="row1">
-
 </div>
 <br>
 <br>
@@ -28,9 +27,10 @@
     $("#new").click(function() {
       addFile($("#file-name").val(), 1, $("#row1"));
     });
+    //{% for folder in request.user.rootdirectory.children.all %}
+        addFile("{{folder.name}}", "{{folder.pk}}", $('#row1'));
+   // {% endfor %}
   });
-
-
 
   $(function() {
     $("input[name='optradio']").click(function() {

@@ -14,15 +14,14 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from .models import UserData
 import requests
-
+from mainupload.models import RootDirectory
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def home(request):
-    return render(request, 'LoginBase.html')
+
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('login_signup:home'))
+
 
 def signup(request):
     registered = False
@@ -54,7 +53,8 @@ def signup(request):
 
             if (result['did_you_mean'] == '' and result['result'] == "valid"):
                 print("valid")
-                userdata = UserData.objects.create(email=to_email, name=name, password=password)
+                userdata = UserData.objects.create(
+                    email=to_email, name=name, password=password)
                 userdata.save()
                 mail_subject = 'Activate your blog account.'
                 to_email = user_form.cleaned_data.get('email')
@@ -72,7 +72,6 @@ def signup(request):
                     return render(request, 'login_signup/signup.html', {'user_form': user_form})
                 return HttpResponse('The email given is invalid please check it ')
 
-
         else:
             print(user_form.errors)
     else:
@@ -89,11 +88,8 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        # login(request, user)
-        # return redirect('home')
+        RootDirectory.objects.create(User=user)
         return render(request, 'LoginHome.html', {})
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-        # return render(request, 'login.html', {'form': form})
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -111,7 +107,8 @@ def user_login(request):
                 return HttpResponse("Your account was inactive.")
         else:
             print("Someone tried to login and failed.")
-            print("They used username: {} and password: {}".format(username, password))
+            print("They used username: {} and password: {}".format(
+                username, password))
             return HttpResponse("Invalid login details given")
     else:
         return render(request, 'login_signup/login.html', {})
