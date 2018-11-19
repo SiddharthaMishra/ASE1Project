@@ -28,6 +28,9 @@
     $("#new").click(function() {
       addFile($("#file-name").val(), 1, $("#row1"));
     });
+    {% for folder in request.user.rootdirectory.children.all %}
+      addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
+    {% endfor %}
   });
 
 
@@ -44,13 +47,10 @@
 var  num = 0
 
   function addDirectory(name, pk, parent) {
-    var div = "<div id='fol" + num + "'><p style='padding:10px'> <button  class='btn btn-secondary btn-lg btn2 text-right'> <i  class='fa fa-folder'></i>  <span>" +
-      $("#dir-name").val() +
+    var div = "<div id='fol" + pk + "'><p style='padding:10px'> <button  class='btn btn-secondary btn-lg btn2 text-right'> <i  class='fa fa-folder'></i>  <span>" +
+      name +
       "</span></button></p></div>"
-    parent.append(div)
-    num++
-
-
+    parent.append(div);
   }
   $("#newDirec").click(function() {
     addDirectory($("#dir-name").val(),num,$("#row2"));
