@@ -10,13 +10,84 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="https://daemonite.github.io/material/css/material.min.css"> -->
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
   <style>
     @import url(http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css);
+
+    .previous {
+    background-color: #e2dcdc;
+    color: black;
+}
+.round {
+    border-radius:100%;
+}
+
+    .ScrollFile {
+      height:225px;
+      margin-left: 30px;
+      float: right;
+      width: 100%;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+    .ScrollDirec {
+      height:225px;
+      margin-left: 30px;
+      float: right;
+      width: 100%;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+    #row1::-webkit-scrollbar-track
+    {
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    	border-radius: 10px;
+    	background-color: #F5F5F5;
+    }
+
+    #row1::-webkit-scrollbar
+    {
+    	width: 12px;
+    	background-color: #F5F5F5;
+    }
+
+    #row1::-webkit-scrollbar-thumb
+    {
+    	border-radius: 10px;
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    	background-color: #e2dcdc;
+    }
+
+    #row2::-webkit-scrollbar-track
+    {
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    	border-radius: 10px;
+    	background-color: #F5F5F5;
+    }
+
+    #row2::-webkit-scrollbar
+    {
+    	width: 12px;
+    	background-color: #F5F5F5;
+    }
+
+    #row2::-webkit-scrollbar-thumb
+    {
+    	border-radius: 10px;
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    	background-color: #e2dcdc;
+    }
+
+
 
 .navi2 {
     margin-bottom: 0;
@@ -32,15 +103,23 @@
   .navbar .navbar-brand {
   }
   .flex-sm-column a:hover{
-   background-color: black !important;
+   background-color: black ;
+   color:#e2dcdc;
 }
 .flex-sm-column button:hover{
- background-color: black !important;
+ background-color: black ;
+ color: #e2dcdc ;
+}
+.nav-linkasbch:hover{
+  background-color: black ;
+   color: white ;
 }
   .navbar-nav li a:hover
 {
-    background-color: black !important;
+    background-color: black ;
+    color:#e2dcdc;
 }
+
 
   .navbar-default .navbar-toggle {
     border-color: transparent;
@@ -51,17 +130,29 @@
     }
 
     .btn2 {
-      background-color: lightgrey;
+      background-color: #e2dcdc;
       border: none;
       color: black;
-      padding: 10px 50px ;
+      padding: 10px 25px ;
       font-size: 16px;
       cursor: pointer;
+      width:150px;
+      line-height: 17px;
+      max-height: 50px;
+      display: inline-block;
+      box-sizing: border-box;
+      margin-top: -3px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      /* display: block; */
+      overflow: hidden;
+      float:left;
   }
 
   /* Darker background on mouse-over */
   .btn2:hover {
-      background-color: RoyalBlue;
+      background-color: black;
+      color:#e2dcdc;
   }
   </style>
 </head>
@@ -82,7 +173,7 @@
           <div class="navbar-collapse collapse justify-content-stretch" id="navbar6">
             <ul class="navbar-nav">
               <li class="nav-item active">
-                <a class="nav-link" href="{% url 'DispFile:home' %}"><span class="text-muted">Home</span></a>
+                <a class="nav-link tes" href="{% url 'DispFile:home' %} "><span class="text-muted">Home</span></a>
               </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -106,21 +197,32 @@
         <hr>
       </div>
     </div>
+    <!-- <div class="row">
+      <br>
+      <div class="col-md-2" >
+        <hr>
+      </div>
+      <div class="col-md-10">
+        <hr>
+      </div>
+    </div> -->
+
+
     <div class="row">
       <div class="col-sm-2">
-        <nav class="navbar navbar-light navbar-expand-sm px-0" id="SideNavBar">
-          <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarWEX" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-light navbar-expand-sm " id="SideNavBar">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarWEX" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-          </button>-->
-          <div id="navbarWEX">
-            <div class="flex-sm-column ">
-              <a class="nav-item nav-link active text-left" href="{% url 'DispFile:home' %}"><span class="text-muted">Home</span></a>
+          </button>
+          <div class="navbar-collapse collapse justify-content-stretch" id="navbarWEX">
+            <div class=" d-flex justify-content-start  flex-sm-column ">
+              <a class="btn btn-light nav-item navbar-btn btn-block text-left" href="{% url 'DispFile:home' %}"><span class="text-muted">Home</span></a>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" data-toggle="modal" data-target="#exampleModal"><span class="text-muted">File Upload</span></button>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left " data-toggle="modal" data-target="#exampleModal2"><span class="text-muted">Add Directory</span></button>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="recent-button"><span class="text-muted">Recent</span></button>
-              <hr>
+              <div><hr/></div>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="backup-button"><span class="text-muted">Backup</span></button>
-              <hr>
+              <div><hr/></div>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="storage-button"><span class="text-muted">Storage</span></button>
               <br>
               <br>
@@ -166,7 +268,7 @@
                   <input type="text" id="file-name" class="form-control" placeholder="Enter FileName" required>
                   <div id="ShowHide">
                     <label for="password" class="col-form-label">Password:</label>
-                    <input type="password" class="form-control" placeholder="Enter Password" name="psw" required>
+                    <input type="password" class="form-control" placeholder="Enter Password" name="psw" id="file-password" required>
                   </div>
                   <br>
                   <label class="radio-inline" for="yes">
@@ -180,7 +282,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" id="new" data-dismiss="modal">Create</button>
+              <button type="submit" class="btn btn-secondary" id="new" data-dismiss="modal">Create</button>
               <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
             </div>
           </div>
@@ -200,65 +302,87 @@
               <form>
                 <div class="form-group">
                   <label for="Dirname" class="col-form-label">Directory Name:</label>
-                  <input type="text" id="dir-name" class="form-control" placeholder="name" required>
+                  <input type="text" id="dir-name" class="form-control " placeholder="name" required>
                 </div>
               </form>
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" id="newDirec" data-dismiss="modal">Create</button>
-              <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+              <button type="submit" class="btn btn-secondary" id="newDirec" data-dismiss="modal">Create</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-8" id="clearRow" >
+      <div class="col-sm-8" id="clearRow">
         <div id="clearRow2">
-        {%block content %}
+          {%block content %}
 
-        {%endblock%}
-      </div>
+          {%endblock%}
+        </div>
       </div>
     </div>
 
   </div>
   <script type="text/javascript">
-    function addRecent( parent1 ,parent2 ) {
+    function addRecent(parent1, parent2) {
       parent1.empty()
       parent2.empty()
-      parent2.append("<h2> Here Recent are shown</h2> <p>recent files</p>");
+      var Recentdiv = "<h2> Here Recent are shown</h2> <p>recent files</p>"
+      parent2.append(Recentdiv);
     }
 
-    $(document).ready(function() {
-      $("#recent-button").click(function() {
-        addRecent($("#clearRow2"),$("#clearRow"));
+    //
+    // $("#recent-button").click(function() {
+    //   addRecent($("#clearRow2"),$("#clearRow"));
+    // });
+    $("#recent-button").click(function() {
+      $.ajax({
+        url: "{% url 'DispFile:home' %} ",
+        success: function() {
+          addRecent($("#clearRow2"), $("#clearRow"));
+        }
+      });
+    })
+
+    function addStorage(storage, parent1, parent2) {
+      parent1.empty()
+      parent2.empty()
+      var Storagediv = "<h2> Storage </h2><p>" + storage + "%</p><p>Storage of user is shown</p>"
+      parent2.append(Storagediv);
+    }
+
+
+    $("#storage-button").click(function() {
+      $.ajax({
+        url: "{% url 'DispFile:home' %} ",
+        success: function() {
+          addStorage(90, $("#clearRow2"), $("#clearRow"));
+        }
       });
     });
 
-    function addStorage( storage,parent1 ,parent2 ) {
+
+    function addBackup(parent1, parent2) {
       parent1.empty()
       parent2.empty()
-      parent2.append("<h2> Storage </h2><p>"+storage+"%</p><p>Storage of user is shown</p>");
+      var Backupdiv = "<h2> Here Backups or previous versions are shown if possible</h2> <p>previous version files OR backup files</p>"
+      parent2.append(Backupdiv);
     }
 
-    $(document).ready(function() {
-      $("#storage-button").click(function() {
-        addStorage(90,$("#clearRow2"),$("#clearRow"));
-      });
-    });
-
-    function addBackup( parent1 ,parent2 ) {
-      parent1.empty()
-      parent2.empty()
-      parent2.append("<h2> Here Backups or previous versions are shown if possible</h2> <p>previous version files OR backup files</p>");
-    }
-
-    $(document).ready(function() {
-      $("#backup-button").click(function() {
-        addBackup($("#clearRow2"),$("#clearRow"));
+    $("#backup-button").click(function() {
+      $.ajax({
+        url: "{% url 'DispFile:home' %} ",
+        success: function() {
+          addBackup($("#clearRow2"), $("#clearRow"));
+        }
       });
     });
   </script>
+
+
+
+
+
 </body>
 
 </html>

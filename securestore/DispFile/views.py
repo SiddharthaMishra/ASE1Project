@@ -21,21 +21,14 @@ def home(request):
     return render(request, 'LoginHome.html', context=context)
 
 
-def Recent(request):
-    return render(request, 'LoginRecent.html')
-
-
-def Storage(request):
-    return render(request, 'LoginStorage.html')
-
-
+@login_required
 def Help(request):
     return render(request, 'LoginHelp.html')
 
-
+@login_required
 def AboutUs(request):
     return render(request, 'LoginAboutUs.html')
 
-
+@login_required
 def ContactUs(request):
     return render(request, 'LoginContactUs.html')
