@@ -5,7 +5,7 @@
 
 <p>Files</p>
 <hr>
-<div class="row ScrollFile" id="row1" >
+<div class="row ScrollFile" id="row1">
 
 </div>
 <br>
@@ -22,195 +22,265 @@
 </div>
 
 <script type="text/javascript">
-
-
   var rightClick = function() {
 
-$('div').on('contextmenu','.card', function(e) {
-var top = e.pageY - 120;
-var left = e.pageX - 150;
-$("#context-menu").css({
-  display: "block",
-  top: top,
-  left: left
-}).addClass("show");
-return false; //blocks default Webbrowser right click menu
-})
+    $('div').on('contextmenu', '.card', function(e) {
+      var top = e.pageY - 120;
+      var left = e.pageX - 150;
+      $("#context-menu").css({
+        display: "block",
+        top: top,
+        left: left
+      }).addClass("show");
+      return false; //blocks default Webbrowser right click menu
+    })
 
-$('#row1').on("click", function() {
-$("#context-menu").removeClass("show").hide();
-});
+    $('#row1').on("click", function() {
+      $("#context-menu").removeClass("show").hide();
+    });
 
 
-$("#context-menu a").on("click", function() {
-$(this).parent().removeClass("show").hide();
-});
+    $("#context-menu a").on("click", function() {
+      $(this).parent().removeClass("show").hide();
+    });
 
-}
-
-var alreadyrunflag = 0;
-
-if (document.addEventListener)
-  document.addEventListener("DOMContentLoaded", function(){
-      alreadyrunflag=1;
-      rightClick();
-  }, false);
-else if (document.all && !window.opera) {
-  document.write('<script type="text/javascript" id="contentloadtag" defer="defer" src="javascript:void(0)"><\/script>');
-  var contentloadtag = document.getElementById("contentloadtag")
-  contentloadtag.onreadystatechange=function(){
-      if (this.readyState=="complete"){
-          alreadyrunflag=1;
-          rightClick();
-      }
   }
-}
 
-window.onload = function(){
-setTimeout("if (!alreadyrunflag){rightClick}", 0);
-}
+  var alreadyrunflag = 0;
 
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", function() {
+      alreadyrunflag = 1;
+      rightClick();
+    }, false);
+  else if (document.all && !window.opera) {
+    document.write('<script type="text/javascript" id="contentloadtag" defer="defer" src="javascript:void(0)"><\/script>');
+    var contentloadtag = document.getElementById("contentloadtag")
+    contentloadtag.onreadystatechange = function() {
+      if (this.readyState == "complete") {
+        alreadyrunflag = 1;
+        rightClick();
+      }
+    }
+  }
 
+  window.onload = function() {
+    setTimeout("if (!alreadyrunflag){rightClick}", 0);
+  }
 </script>
 
 
 <script>
-
- var  num = 0
+  var level = 1; //keeping track of id
+  var num = 0;
+  var root_pk;
+  var path;
+  var ids=[root_pk,];  // function for getting directory id
 
   function clickMe(e) {
-    console.log("You have clicked button id = "+e.id+" and button value = ");
+    console.log("You have clicked button id = " + e.id + " and button value =" + e.value + "");
+    console.log(e.value)
     // console.log(e.id)
-    id=e.id
+    id = e.id
+    if (level == 1) {
+      lvalue = e.value
+    }
     return (e.id)
-}
 
-function clearall(id){
-  // console.log("wtf")
-    // $(id).dblclick(function() {
+  }
+
+  // function for entering into a sud directory
+
+  function clearall(id, value) {
+
+    console.log(value)
+    var parent_id = id.split("_")[3];
+    level += 1
+    num = 0
+    if (level == 1) {
+      path = value
+    } else {
+      path = path + "/" + value
+
+    }
+     ids.push(parent_id);
+
+    $("#clearRow").empty()
+    // var div = '<div> <button id="back" class="btn btn-secondary  previous round text-right">&#8249;</button></div>'
+    var paths = path.split("/")
+    console.log(paths)
+    for (var i = 1; i < paths.length; i++) {
+      var div = '<p style="float:left">>></p><div style="float:left"> <button id="back_' + i + '" class="btn btn-secondary previous text-right">' + paths[i] + '</button></div>'
+      $("#clearRow").append(div);
+
+    }
+    var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'
+
+    $("#clearRow").append(subDiv)
+
+
+    $('#back_1').click(function() {
       $("#clearRow").empty()
-      var div = '<div> <button id="back" class="btn btn-secondary  previous round text-right">&#8249;</button></div>'
-      var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'
-      $("#clearRow").append(div)
-      $("#clearRow").append(subDiv)
-    // });
-
-      $('#back').click(function() {
-        $("#clearRow").empty()
-        var div3 = '<div id="clearRow2" ><p>Files</p><hr><div class="row" id="row1"></div><br><br><br><p>Folders</p><hr><div class="row"  id="row2"></div></div>'
-        $("#clearRow").append(div3)
-        {% for folder in request.user.rootdirectory.children.all %}
-        addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
-        {% endfor %}
+      var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
+        +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
+        +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
+      path = ""
+      $("#clearRow").append(div3)
+      {% for folder in request.user.rootdirectory.children.all %}
+      addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
+      {% endfor %}
     });
   }
 
+  // Function for adding file
+
   function addFile(name, pk, parent) {
-    parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file" + pk +
-      "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
-      name + "</p>  </div> </div>");
-          }
+    if (level == 1) {
+
+      parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + level + "_" + pk +
+        "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+        name + "</p>  </div> </div>");
+    } else {
+      parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + level + "_" + pk +
+        "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+        name + "</p>  </div> </div>");
+
+    }
+  }
+
+  // function for adding directory
 
   function addDirectory(name, pk, parent) {
     var id
-    var div = "<div  ><p style='padding:10px' > <button id='fol" + pk +"' class='btn btn-light btn-lg btn2 text-left' ondblclick=' id = clickMe(this);console.log(id);clearall(id)'> <i  class='fa fa-folder'></i>  <span>" +
-      name +
-      "</span></button></p></div>"
-    parent.append(div);
+    if (level == 1) {
+      var div = "<div  ><p style='padding:10px' > <button id='fol_" + root_pk+"_"+ level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
+        "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
+        name +
+        "</span></button></p></div>"
+      parent.append(div);
+    } else {
+      var div = "<div ><p style='padding:10px' > <button id='fol_" +root_pk+"_"+ level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
+        "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
+        name +
+        "</span></button></p></div>"
+      parent.append(div);
+
+    }
     num++
+
   }
 
+
   $(document).ready(function() {
-
-  {% for folder in request.user.rootdirectory.children.all %}
-  addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
-  {% endfor %}
-
-
+    root_pk = {{ request.user.rootdirectory.pk }}
+    {% for folder in request.user.rootdirectory.children.all %}
+    addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
+    {% endfor %}
 
 
-   // $(document).bind('keypress', function(e) {
-   //      if(e.keyCode==13){
-   //           $('#newDirec').trigger('click');
-   //       }
-   //  });
+    // $(document).bind('keypress', function(e) {
+    //      if(e.keyCode==13){
+    //           $('#newDirec').trigger('click');
+    //       }
+    //  });
 
-  $("#new").click(function() {
-    $.ajax({
-      url: "{% url 'DispFile:home' %} ",
-      success: function() {
+
+    //adding file
+    $("#new").click(function(e) {
+      // e.preventDefault();
+      var frm = $('#filesform');
+      console.log(frm.serialize())
+      $.ajax({
+        url: "{% url 'DispFile:home' %} ",
+        type: 'POST',
+        data: frm.serialize(),
+        success: function(data) {
+          $('#filesform').val('');
+          console.log(data);
           if ($("#file-name").val()) {
             addFile($("#file-name").val(), 1, $("#row1"));
-          }
-          else {
+          } else {
             addFile("New File", 1, $("#row1"));
 
           }
-  }
-});
-});
-
- $('#file-name , #file-password ,#yes , #no').keyup(function(event){
-
-	var keycode = (event.keyCode ? event.keyCode : event.which);
-	if(keycode == '13'){
-		// alert('You pressed a "enter" key in textbox');
-    $('#new').trigger('click');
-	}
-
-});
-
-
-
-
-  $(function() {
-    $("input[name='optradio']").click(function() {
-      if ($("#yes").is(":checked")) {
-        $("#ShowHide").show();
-      } else {
-        $("#ShowHide").hide();
-      }
+        },
+        cache: false,
+      });
     });
-  });
+    //
+    //  $('#file-name , #file-password ,#yes , #no').keyup(function(event){
+    //
+    // 	var keycode = (event.keyCode ? event.keyCode : event.which);
+    // 	if(keycode == '13'){
+    // 		// alert('You pressed a "enter" key in textbox');
+    //     $('#new').trigger('click');
+    // 	}
+    //
+    // });
 
 
 
-  $("#newDirec").click(function() {
-    $.ajax({
-      url: "{% url 'DispFile:home' %} ",
-      success: function() {
-        if ($("#dir-name").val()){
-        addDirectory($("#dir-name").val(), num, $("#row2"));
-      }
-      else {
-        addDirectory("New Folder", 1, $("#row2"));
-
-      }
+    //Password selection
+    $(function() {
+      $("input[name='optradio']").click(function() {
+        if ($("#yes").is(":checked")) {
+          $("#ShowHide").show();
+        } else {
+          $("#ShowHide").hide();
         }
       });
     });
 
-   //  $(".so").keypress(function(event){
-   //  // event.preventDefault();
-   // 	var keycode = (event.keyCode ? event.keyCode : event.which);
-   // 	if(keycode == '13'){
-   // 		// alert('You pressed a "enter" key in textbox');
-   //     $("#newDirec").trigger('click');
-   // 	}
-   //
-   // });
 
-        });
+    //Adding directory
+
+    $("#newDirec").click(function(e) {
+      console.log("asd");
+      var data;
+      // var parentdata;
+
+      // console.log("x");
+      // console.log(parentdata);
+      data = new FormData(document.getElementById("directories"));
+      data.append('parent_is_root', level == 1);
+      if (level == 1){
+      data.append('parent_id',root_pk);
+      }
+      else{
+      data.append('parent_id', ids[ids.length-1]);
+    }
+
+      // console.log(object)
+      $.ajax({
+        url: "/mainupload/api/",
+        type: 'POST',
+        data: data,
+        success: function(res) {
+          console.log(res);
+          if ($("#dir-name").val()) {
+            addDirectory($("#dir-name").val(), 100, $("#row2"));
+          } else {
+            addDirectory("New Folder", 100, $("#row2"));
+
+          }
+        },
+        processData: false,
+        contentType: false
+
+      });
+    });
+  });
 </script>
 
 
 <script>
   // tell the embed parent frame the height of the content
-  if (window.parent && window.parent.parent){
+  if (window.parent && window.parent.parent) {
     window.parent.parent.postMessage(["resultsFrame", {
       height: document.body.getBoundingClientRect().height,
       slug: "qej2ppcq"
     }], "*")
   }
 </script>
+
 {% endblock %}

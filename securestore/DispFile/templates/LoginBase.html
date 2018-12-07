@@ -1,4 +1,4 @@
-<!Doctype html>
+<!DOCTYPE html>
 {% load staticfiles %}
 <html lang="en">
 
@@ -160,7 +160,7 @@
 <body class="bg-light">
 
 
-
+<!-- Top  nav bar -->
   <div class="container-fluid">
     <div class="row">
 
@@ -208,6 +208,7 @@
     </div> -->
 
 
+<!-- Side nav bar -->
     <div class="row">
       <div class="col-sm-2">
         <nav class="navbar navbar-light navbar-expand-sm " id="SideNavBar">
@@ -246,6 +247,7 @@
         </nav>
       </div>
 
+<!-- Modal for file upload -->
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -256,16 +258,18 @@
               </button>
             </div>
             <div class="modal-body">
-              <form>
+              <form  method="POST" id="filesform" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-group">
                   <p>Default file:</p>
+
                   <input type="file" class="col-form-label" id="input-file" name="filename2" multiple>
                   <br>
                   <br>
                   <label for="name" class="col-form-label">File Name:</label>
                   <br>
 
-                  <input type="text" id="file-name" class="form-control" placeholder="Enter FileName" required>
+                  <input type="text" id="file-name" name="filename" class="form-control" placeholder="Enter FileName" required>
                   <div id="ShowHide">
                     <label for="password" class="col-form-label">Password:</label>
                     <input type="password" class="form-control" placeholder="Enter Password" name="psw" id="file-password" required>
@@ -289,6 +293,7 @@
         </div>
       </div>
 
+<!-- Modal for  directory upload -->
       <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -299,17 +304,18 @@
               </button>
             </div>
             <div class="modal-body">
-              <form>
-                <div class="form-group">
-                  <label for="Dirname" class="col-form-label">Directory Name:</label>
-                  <input type="text" id="dir-name" class="form-control " placeholder="name" required>
+              <form id="directories">
+                  <div class="form-group">
+                    <label for="Dirname" class="col-form-label">Directory Name:</label>
+                    <input type="text" id="dir-name" class="form-control" name="name" placeholder="name" required>
+                  </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-secondary" id="newDirec" data-dismiss="modal">Create</button>
                 </div>
               </form>
 
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-secondary" id="newDirec" data-dismiss="modal">Create</button>
-            </div>
           </div>
         </div>
       </div>

@@ -29,24 +29,25 @@ class ParentDirSerializer(serializers.Serializer):
 
 
 class DirectorySerializer(serializers.ModelSerializer):
-    parent = ParentDirSerializer()
     files = FileSerializer(many=True, required=False)
     children = SubDirSerializer(many=True, required=False)
+    #parent = ParentDirSerializer()
+    parent_id = serializers.IntegerField(write_only=True)
+    parent_is_root = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = Directory
-        fields = ('name', 'parent', 'files', 'children')
-        read_only_fields = ('files', 'children')
+        fields = ('name',  'parent_id', 'parent_is_root', 'files', 'children')
+        read_only_fields = ('files', 'children',)
         depth = 1
 
     def create(self, validated_data):
-        print(validated_data['parent'])
-        if validated_data['parent']['is_root']:
+        if validated_data['parent_is_root']:
             parent = RootDirectory
         else:
             parent = Directory
 
-        parent = parent.objects.get(pk=int(validated_data['parent']['pk']))
+        parent = parent.objects.get(pk=int(validated_data['parent_id']))
 
         return Directory.objects.create(parent=parent, name=validated_data['name'])
 
