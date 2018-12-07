@@ -37,8 +37,8 @@ class DirectorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Directory
-        fields = ('name',  'parent_id', 'parent_is_root', 'files', 'children')
-        read_only_fields = ('files', 'children',)
+        fields = ('pk','name',  'parent_id', 'parent_is_root', 'files', 'children')
+        read_only_fields = ('files', 'children','pk')
         depth = 1
 
     def create(self, validated_data):
@@ -58,4 +58,5 @@ class RootDirectorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RootDirectory
-        fields = ('name', 'files', 'children')
+        fields = ('files', 'children')
+        depth = 0

@@ -5,12 +5,13 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 #from django.core.files.storage import fileSystemStorage
-from .serializers import FileSerializer, DirectorySerializer, RootDirectory
+from .serializers import FileSerializer, DirectorySerializer, RootDirectorySerializer,  SubDirSerializer
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from braces.views import CsrfExemptMixin
 import json
+from .models import Directory, RootDirectory
 
 # Create your views here.
 
@@ -50,11 +51,13 @@ class DirectoryView(CsrfExemptMixin , APIView):
                             status=status.HTTP_201_CREATED)
         else:
             return Response(directory_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    def get(self, request):
-        directory_serializer = DirectorySerializer(data=request.data)
-        if directory_serializer.is_valid():
-            directory_serializer.save()
-            return Response(directory_serializer.data,
-                            status=status.HTTP_201_CREATED)
+    def get(self, request, is_directory, pk):
+        if is_directory == 0:
+            parent = RootDirectory.objects.get(pk=pk)
+            serializer = RootDirectorySerializer
         else:
-            return Response(directory_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            parent = Directory.objects.get(pk=pk)
+            serializer = DirectorySerializer
+
+        serializer = serializer(parent)
+        return Response(serializer.data)
