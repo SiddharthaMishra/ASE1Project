@@ -143,9 +143,5 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn")
 
 # Media files
-import time
-UPLOAD_PATH = 'securestore/uploads/' + time.strftime("%Y/%m/%d/")
-MEDIA_ROOT = 'media/'
-# MEDIA_URL = '/media/'
-
-MEDIA_URL = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
