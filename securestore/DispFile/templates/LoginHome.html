@@ -74,12 +74,25 @@
   var level = 1; //keeping track of id
   var num = 0;
   var root_pk;
-  var path;
+  root_pk = {{ request.user.rootdirectory.pk }}
+  var path=["",];
   var ids=[root_pk,];  // function for getting directory id
 
   function clickMe(e) {
-    console.log("You have clicked button id = " + e.id + " and button value =" + e.value + "");
-    console.log(e.value)
+    // console.log("You have clicked button id = " + e.id + " and button value =" + e.value + "");
+    // console.log(e.value)
+    // console.log(e.id)
+    id = e.id
+    if (level == 1) {
+      lvalue = e.value
+    }
+    return (e.id)
+
+  }
+
+  function clickMe2(e) {
+    // console.log("You have clicked button id = " + e.id + " and button value =" + e.value + "");
+    // console.log(e.value)
     // console.log(e.id)
     id = e.id
     if (level == 1) {
@@ -90,27 +103,76 @@
   }
 
   // function for entering into a sud directory
+function back_folder(id){
+    ids.pop()
+    path.pop()
+    present_id=id.split("_")
+    level=level-1
+    console.log(ids)
+    console.log(ids.length)
+    console.log(path.length)
+    root_directory=root_pk
+    sub_directory=ids[ids.length-1]
+  if (ids.length>1){
+    console.log("worked")
+    $("#clearRow").empty()
+    for (var i = 1; i < path.length; i++) {
+      var div = '<p style="float:left">>></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div><br><br>'
+      $("#clearRow").append(div);
+    }
 
+    var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
+      +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
+      +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
+    $("#clearRow").append(div3)
+
+    $.ajax({
+      url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
+      type: 'GET',
+      success: function(res) {
+        console.log(res.children[0]);
+         for (i in res.children)
+         {
+            addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
+         }
+      },
+      processData: false,
+      contentType: false
+
+    });
+  }
+    else{
+      $("#clearRow").empty()
+      var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
+        +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
+        +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
+      $("#clearRow").append(div3)
+    {% for folder in request.user.rootdirectory.children.all %}
+    addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
+    {% endfor %}
+}
+}
   function clearall(id, value) {
 
-    console.log(value)
     var parent_id = id.split("_")[3];
     level += 1
     num = 0
     if (level == 1) {
-      path = value
+      path.push(value)
     } else {
-      path = path + "/" + value
+     path.push(value)
 
     }
-     ids.push(parent_id);
+     ids.push(parent_id)
+     console.log(ids);
+     root_directory=root_pk
+     sub_directory=ids[ids.length-1]
 
     $("#clearRow").empty()
     // var div = '<div> <button id="back" class="btn btn-secondary  previous round text-right">&#8249;</button></div>'
-    var paths = path.split("/")
-    console.log(paths)
-    for (var i = 1; i < paths.length; i++) {
-      var div = '<p style="float:left">>></p><div style="float:left"> <button id="back_' + i + '" class="btn btn-secondary previous text-right">' + paths[i] + '</button></div>'
+    console.log(path)
+    for (var i = 1; i < path.length; i++) {
+      var div = '<p style="float:left">>></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
       $("#clearRow").append(div);
 
     }
@@ -118,18 +180,23 @@
 
     $("#clearRow").append(subDiv)
 
+    $.ajax({
+      url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
+      type: 'GET',
+      success: function(res) {
+        console.log(res.children[0]);
+         for (i in res.children)
+         {
+            addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
+         }
+      },
+      processData: false,
+      contentType: false
 
-    $('#back_1').click(function() {
-      $("#clearRow").empty()
-      var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
-        +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
-        +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
-      path = ""
-      $("#clearRow").append(div3)
-      {% for folder in request.user.rootdirectory.children.all %}
-      addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
-      {% endfor %}
     });
+
+
+
   }
 
   // Function for adding file
@@ -172,7 +239,7 @@
 
 
   $(document).ready(function() {
-    root_pk = {{ request.user.rootdirectory.pk }}
+
     {% for folder in request.user.rootdirectory.children.all %}
     addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
     {% endfor %}
@@ -235,8 +302,8 @@
     //Adding directory
 
     $("#newDirec").click(function(e) {
-      console.log("asd");
       var data;
+      console.log(ids)
       // var parentdata;
 
       // console.log("x");
@@ -257,12 +324,8 @@
         data: data,
         success: function(res) {
           console.log(res);
-          if ($("#dir-name").val()) {
-            addDirectory($("#dir-name").val(), 100, $("#row2"));
-          } else {
-            addDirectory("New Folder", 100, $("#row2"));
+            addDirectory(res.name, res.pk, $("#row2"));
 
-          }
         },
         processData: false,
         contentType: false
