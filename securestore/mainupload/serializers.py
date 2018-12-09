@@ -6,12 +6,23 @@ from .models import Directory, File, RootDirectory
 
 class FileSerializer(serializers.ModelSerializer):
     file = serializers.FileField(use_url=False)
-
+    parent_pk = serializers.IntegerField(write_only=True)
+    parent_is_root = serializers.BooleanField(write_only=True)
+    filename = serializers.CharField(write_only=True)
     class Meta:
         model = File
-        fields = ('file', 'pk')
+        fields = ('file','filename', 'pk', 'parent_pk', 'parent_is_root')
         read_only_fields = ('pk',)
 
+    def create(self, validated_data):
+        if validated_data['parent_is_root']:
+            parent = RootDirectory
+        else:
+            parent = Directory
+
+        parent = parent.objects.get(pk=validated_data['parent_pk'])
+        f = parent.files.create(file=validated_data['file'], name=validated_data['filename'])
+        return f
 
 class SubDirSerializer(serializers.ModelSerializer):
     class Meta:

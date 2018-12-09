@@ -21,6 +21,13 @@ from .models import Directory, RootDirectory
 def index(request):
     return HttpResponse('hi')
 
+def create_file(request):
+    parent_pk = request.POST['parent_pk']
+
+    f = CreateFIle()
+
+    parent.files.create(das)
+
 @csrf_exempt
 def create_directory(request):
     return HttpResponse(request.POST['folder_name'])
