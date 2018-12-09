@@ -6,6 +6,10 @@ from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 
 
+class Photo(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+    file = models.FileField(upload_to='mainupload/')
+
 class RootDirectory(models.Model):
     User = models.OneToOneField(User, on_delete=models.CASCADE)
     children = GenericRelation('Directory', related_query_name='dirs')
@@ -28,7 +32,6 @@ class Directory(models.Model):
             dir = dir.parent
 
         return dir.User
-
 
 class File(models.Model):
     file = models.FileField(upload_to='files/')

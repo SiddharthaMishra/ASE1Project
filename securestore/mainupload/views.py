@@ -4,19 +4,34 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
-
-from .serializers import FileSerializer, DirectorySerializer, RootDirectory
-
+#from django.core.files.storage import fileSystemStorage
+from .serializers import FileSerializer, DirectorySerializer, RootDirectorySerializer,  SubDirSerializer
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.views.decorators.csrf import csrf_exempt
+from braces.views import CsrfExemptMixin
+import json
+from .models import Directory, RootDirectory
 
 # Create your views here.
+
+
 
 
 def index(request):
     return HttpResponse('hi')
 
+def create_file(request):
+    parent_pk = request.POST['parent_pk']
 
+    f = CreateFIle()
+
+    parent.files.create(das)
+
+@csrf_exempt
 def create_directory(request):
-    pass
+    return HttpResponse(request.POST['folder_name'])
+
 
 
 class FileView(APIView):
@@ -32,8 +47,9 @@ class FileView(APIView):
             return Response(file_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+class DirectoryView(CsrfExemptMixin , APIView):
+    authentication_classes = []
 
-class DirectoryView(APIView):
     def post(self, request):
         directory_serializer = DirectorySerializer(data=request.data)
         if directory_serializer.is_valid():
@@ -42,3 +58,13 @@ class DirectoryView(APIView):
                             status=status.HTTP_201_CREATED)
         else:
             return Response(directory_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, is_directory, pk):
+        if is_directory == 0:
+            parent = RootDirectory.objects.get(pk=pk)
+            serializer = RootDirectorySerializer
+        else:
+            parent = Directory.objects.get(pk=pk)
+            serializer = DirectorySerializer
+
+        serializer = serializer(parent)
+        return Response(serializer.data)

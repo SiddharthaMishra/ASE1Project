@@ -6,12 +6,23 @@ from .models import Directory, File, RootDirectory
 
 class FileSerializer(serializers.ModelSerializer):
     file = serializers.FileField(use_url=False)
-
+    parent_pk = serializers.IntegerField(write_only=True)
+    parent_is_root = serializers.BooleanField(write_only=True)
+    filename = serializers.CharField(write_only=True)
     class Meta:
         model = File
-        fields = ('file', 'pk')
+        fields = ('file','filename', 'pk', 'parent_pk', 'parent_is_root')
         read_only_fields = ('pk',)
 
+    def create(self, validated_data):
+        if validated_data['parent_is_root']:
+            parent = RootDirectory
+        else:
+            parent = Directory
+
+        parent = parent.objects.get(pk=validated_data['parent_pk'])
+        f = parent.files.create(file=validated_data['file'], name=validated_data['filename'])
+        return f
 
 class SubDirSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,24 +40,25 @@ class ParentDirSerializer(serializers.Serializer):
 
 
 class DirectorySerializer(serializers.ModelSerializer):
-    parent = ParentDirSerializer()
     files = FileSerializer(many=True, required=False)
     children = SubDirSerializer(many=True, required=False)
+    #parent = ParentDirSerializer()
+    parent_id = serializers.IntegerField(write_only=True)
+    parent_is_root = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = Directory
-        fields = ('name', 'parent', 'files', 'children')
-        read_only_fields = ('files', 'children')
+        fields = ('pk','name',  'parent_id', 'parent_is_root', 'files', 'children')
+        read_only_fields = ('files', 'children','pk')
         depth = 1
 
     def create(self, validated_data):
-        print(validated_data['parent'])
-        if validated_data['parent']['is_root']:
+        if validated_data['parent_is_root']:
             parent = RootDirectory
         else:
             parent = Directory
 
-        parent = parent.objects.get(pk=int(validated_data['parent']['pk']))
+        parent = parent.objects.get(pk=int(validated_data['parent_id']))
 
         return Directory.objects.create(parent=parent, name=validated_data['name'])
 
@@ -57,4 +69,5 @@ class RootDirectorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RootDirectory
-        fields = ('name', 'files', 'children')
+        fields = ('files', 'children')
+        depth = 0
