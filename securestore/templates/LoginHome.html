@@ -1,0 +1,72 @@
+{% extends 'LoginBase.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<p>Files</p>
+<hr>
+<div class="row" id="row1">
+{% for  in  %}
+
+{% endfor %}
+</div>
+<br>
+<br>
+<br>
+<p>Folders</p>
+<hr>
+<div class="row" id="row2">
+</div>
+
+
+<script>
+    function addFile(name, pk, parent) {
+        parent.append(" <div style='margin-right: 30px  ' class='card' class='col-sm-2' style='width:200px' id=file" + pk +
+            "><img class='card-img-top' src= {% static 'img_avatar1.png' %} alt='Card image' style='width:200px'> <div class='card-body'>  <p class='card-text'>" +
+            name + "</p>  </div> </div>");
+    }
+
+$(document).ready(function () {
+    $("#new").click(function () {
+        addFile($("#file-name").val(), 1, $("#row1"));
+    });
+});
+
+
+
+$(function () {
+    $("input[name='optradio']").click(function () {
+        if ($("#yes").is(":checked")) {
+            $("#ShowHide").show();
+        } else {
+            $("#ShowHide").hide();
+        }
+    });
+});
+var num = 0
+
+function addDirectory(name, pk, parent) {
+    var div = "<div id='fol" + num + "'><p style='padding:10px'> <button  class='btn btn-secondary btn-lg btn2 text-right'> <i  class='fa fa-folder'></i>  <span>" +
+        $("#dir-name").val() +
+        "</span></button></p></div>"
+    parent.append(div)
+    num++
+
+
+}
+$("#newDirec").click(function () {
+    addDirectory($("#dir-name").val(), num, $("#row2"));
+    $('#fol0').dblclick(function () {
+        $("#clearRow").empty()
+        var div = '<div> <button id="back" class="btn btn-secondary btn-lg btn2 text-right">back</button></div>'
+        $("#clearRow").append(div)
+
+        $('#back').click(function () {
+            $("#clearRow").empty()
+            var div3 = '<div  ><p>Files</p><hr><div class="row" id="row1"></div><br><br><br><p>Folders</p><hr><div class="row"  id="row2"></div></div>'
+            $("#clearRow").append(div3)
+        });
+    });
+}); 
+</script>
+{% endblock %}
