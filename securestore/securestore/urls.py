@@ -25,3 +25,4 @@ urlpatterns = [
     path('', include('login_signup.urls')),
     path('mainupload/', include('mainupload.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    

@@ -3,8 +3,13 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
+import os
 # Create your models here.
 
+
+class Photo(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+    file = models.FileField(upload_to='mainupload/')
 
 class RootDirectory(models.Model):
     User = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -29,9 +34,10 @@ class Directory(models.Model):
 
         return dir.User
 
-
 class File(models.Model):
     file = models.FileField(upload_to='files/')
+    protected = models.BooleanField(default=False)
+    
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     directory = GenericForeignKey('content_type', 'object_id')
@@ -42,3 +48,6 @@ class File(models.Model):
             dir = dir.parent
 
         return dir.User
+
+    def name(self):
+        return os.path.basename(self.file.name)

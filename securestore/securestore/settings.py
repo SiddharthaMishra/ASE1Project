@@ -27,12 +27,12 @@ SECRET_KEY = '6()e_i=-*-@3q^(yyc=05uvp*)^z8g35ly^4u#g+%p6!&dsc9u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.googlemail.com'
-EMAIL_HOST_USER = 'somanarupesh32@gmail.com'
-EMAIL_HOST_PASSWORD = 'rupesh0422'
+EMAIL_HOST_USER = 'tempsidm1999@gmail.com'
+EMAIL_HOST_PASSWORD = 'passWORD'
 EMAIL_PORT = 587
 
 
@@ -143,7 +143,5 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn")
 
 # Media files
-
-MEDIA_ROOT = 'media/'
-
-MEDIA_URL = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

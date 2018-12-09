@@ -20,7 +20,8 @@ from django.contrib.auth.decorators import login_required
 
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('login_signup:home'))
+    return HttpResponseRedirect(reverse('blog:main_page'))
+
 
 
 def signup(request):
@@ -89,7 +90,8 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         RootDirectory.objects.create(User=user)
-        return render(request, 'LoginHome.html', {})
+        return HttpResponseRedirect(reverse( 'DispFile:home'))
+
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -102,7 +104,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('login_signup:home'))
+                return redirect(reverse('DispFile:home'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
