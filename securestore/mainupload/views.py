@@ -34,8 +34,9 @@ def create_directory(request):
 
 
 
-class FileView(APIView):
+class FileView(CsrfExemptMixin, APIView):
     parser_classes = (MultiPartParser, FormParser)
+    authentication_classes = []
 
     def post(self, request):
         file_serializer = FileSerializer(data=request.data)

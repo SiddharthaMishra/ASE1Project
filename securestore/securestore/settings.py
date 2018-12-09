@@ -31,8 +31,8 @@ ALLOWED_HOSTS = ['*']
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.googlemail.com'
-EMAIL_HOST_USER = 'somanarupesh32@gmail.com'
-EMAIL_HOST_PASSWORD = 'rupesh0422'
+EMAIL_HOST_USER = 'tempsidm1999@gmail.com'
+EMAIL_HOST_PASSWORD = 'passWORD'
 EMAIL_PORT = 587
 
 

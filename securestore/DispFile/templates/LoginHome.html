@@ -268,6 +268,7 @@ function back_folder(id){
     //adding file
     $("#new").click(function(e) {
       var data;
+      console.log("hi");
       data = new FormData(document.getElementById("filesform"));
       data.append('parent_is_root',level == 1)
       if (level == 1){
@@ -277,7 +278,7 @@ function back_folder(id){
       data.append('parent_pk', ids[ids.length-1]);
     }
       $.ajax({
-        url: "mainupload/api/files/ ",
+        url: "/mainupload/api/files/",
         type: 'POST',
         data: data,
         success: function(res) {
@@ -285,8 +286,9 @@ function back_folder(id){
           $('#filesform').val('');
           console.log(res);
             addFile(res.name, res.pk, $("#row1"));
-
-
+        },
+        failure: function(res) {
+            console.log(res);
         },
         cache: false,
         processData: false,
