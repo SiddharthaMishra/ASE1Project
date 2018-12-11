@@ -73,7 +73,7 @@ function back_folder(id) {
     var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
       +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
       +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
-    $("#clearRow").append(div3)
+    $("#clearRow").append(div3);
 
     $.ajax({
       url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
@@ -92,7 +92,7 @@ function back_folder(id) {
       },
       processData: false,
       contentType: false
-
+    });
         var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
             +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
             +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
