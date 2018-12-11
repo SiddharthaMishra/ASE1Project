@@ -21,6 +21,8 @@
   <a class="dropdown-item btn " href="#">Share Link</a>
 </div>
 
+
+
 <script>
   var level = 1; //keeping track of id
   var num = 0;
@@ -56,15 +58,40 @@ function back_folder(id) {
     console.log(ids)
     console.log(ids.length)
     console.log(path.length)
-    root_directory = root_pk
-    sub_directory = ids[ids.length - 1]
-    if (ids.length > 1) {
-        console.log("worked")
-        $("#clearRow").empty()
-        for (var i = 1; i < path.length; i++) {
-            var div = '<p style="float:left">>></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div><br><br>'
-            $("#clearRow").append(div);
-        }
+    root_directory=root_pk
+    sub_directory=ids[ids.length-1]
+  if (ids.length>1){
+    console.log("worked")
+    $("#clearRow").empty()
+    for (var i = 1; i < path.length-1; i++) {
+      var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
+      $("#clearRow").append(div);
+      var dir='<p style="float:left"><span>►</span></p><div style="float:left"><p>'+path[path.length-1]+'</p></div><br>'
+      $("#clearRow").append(dir);
+    }
+
+    var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
+      +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
+      +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
+    $("#clearRow").append(div3)
+
+    $.ajax({
+      url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
+      type: 'GET',
+      success: function(res) {
+        console.log(res.children[0]);
+        console.log(res.files[0]);
+         for (i in res.children)
+         {
+            addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
+         }
+         for (i in res.files)
+         {
+           addFile(res.files[i].name,res.files[i].pk,$("#row1"))
+         }
+      },
+      processData: false,
+      contentType: false
 
         var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
             +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
@@ -132,9 +159,11 @@ function clearall(id, value) {
         var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
         $("#clearRow").append(div);
     }
-    var dir = '<p style="float:left"><span></span>►</p><div style="float:left"><p>' + path[path.length - 1] + '</p></div>'
+    var dir='<p style="float:left"><span>►</span></p><div style="float:left"><p>'+path[path.length-1]+'</p></div>'
     $("#clearRow").append(dir);
-    var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'
+    var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
+    '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
+      '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
 
     $("#clearRow").append(subDiv)
 
@@ -297,23 +326,24 @@ $(document).ready(function() {
 <script type = "text/javascript" >
     $('div').on('click', '.card', function (e) {
     var top = e.pageY - 120;
-    var left = e.pageX - 150;
-    var divId = $(this).attr("id");
-    $("#context-menu").css({
-        display: "block",
-        top: top,
-        left: left
-    }).addClass("show");
-    console.log(divId);
-    });
-    $('#row1,#row2').on("click", function () {
-        $("#context-menu").removeClass("show").hide();
-    });
+    var left = e.pageX - 200;
+var divId = $(this).attr("id");
+$("#context-menu").css({
+  display: "block",
+  top: top,
+  left: left
+}).addClass("show");
+
+console.log(divId)
+});
+$('#row1,#row2').on("click", function() {
+  $("#context-menu").removeClass("show").hide();
+});
 
 
-    $("#context-menu a").on("click", function () {
-        $(this).parent().removeClass("show").hide();
-    }); 
+$("#context-menu a").on("click", function() {
+  $(this).parent().removeClass("show").hide();
+});
 </script>
 
 {% endblock %}
