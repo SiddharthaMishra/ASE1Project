@@ -71,7 +71,8 @@ class FileView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class DirectoryView(APIView):
+class DirectoryView(CsrfExemptMixin, APIView):
+    authentication_classes = []
 
     def post(self, request):
         directory_serializer = DirectorySerializer(data=request.data)

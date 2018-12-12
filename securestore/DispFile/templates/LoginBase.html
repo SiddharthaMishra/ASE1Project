@@ -227,7 +227,7 @@
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left " data-toggle="modal" data-target="#exampleModal2"><span class="text-muted">Add Directory</span></button>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="recent-button"><span class="text-muted">Recent</span></button>
               <div><hr/></div>
-              <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="backup-button"><span class="text-muted">Backup</span></button>
+              <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="sharedwithme-button"><span class="text-muted">Shared with me</span></button>
               <div><hr/></div>
               <button type="button" class="btn btn-light nav-item navbar-btn btn-block text-left" id="storage-button"><span class="text-muted">Storage</span></button>
               <br>
@@ -330,25 +330,6 @@
 
   </div>
   <script type="text/javascript">
-    function addRecent(parent1, parent2) {
-      parent1.empty()
-      parent2.empty()
-      var Recentdiv = "<h2> Here Recent are shown</h2> <p>recent files</p>"
-      parent2.append(Recentdiv);
-    }
-
-    //
-    // $("#recent-button").click(function() {
-    //   addRecent($("#clearRow2"),$("#clearRow"));
-    // });
-    $("#recent-button").click(function() {
-      $.ajax({
-        url: "{% url 'DispFile:home' %} ",
-        success: function() {
-          addRecent($("#clearRow2"), $("#clearRow"));
-        }
-      });
-    })
 
     function addStorage(storage, parent1, parent2) {
       parent1.empty()
@@ -368,21 +349,10 @@
     });
 
 
-    function addBackup(parent1, parent2) {
-      parent1.empty()
-      parent2.empty()
-      var Backupdiv = "<h2> Here Backups or previous versions are shown if possible</h2> <p>previous version files OR backup files</p>"
-      parent2.append(Backupdiv);
-    }
 
-    $("#backup-button").click(function() {
-      $.ajax({
-        url: "{% url 'DispFile:home' %} ",
-        success: function() {
-          addBackup($("#clearRow2"), $("#clearRow"));
-        }
-      });
-    });
+
+
+
   </script>
 
 
