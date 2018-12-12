@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, DirectoryView, FileView, download_file
+from .views import DirectoryView, FileView, index
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/', DirectoryView.as_view()),
     path('api/<int:is_directory>/<int:pk>', DirectoryView.as_view()),
     path('api/files/', FileView.as_view()),
-    path('api/download/<int:pk>', download_file),
+    #path('api/download/<int:pk>', FileView.as_view()),
+    path('api/<int:pk>/', FileView.as_view())
     # url(r'^api/uploader/$',markdown_uploader, name='markdown_uploader_page'),
 ]

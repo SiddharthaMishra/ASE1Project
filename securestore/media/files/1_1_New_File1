@@ -1,0 +1,6 @@
+||=== Build file: "no target" in "no project" (compiler: unknown) ===|
+/home/sid/Documents/DS/1/2.cc||In member function ‘void linkedlist::remove_samesum()’:|
+/home/sid/Documents/DS/1/2.cc|12|error: request for member ‘remove_after’ in ‘prev_i’, which is of pointer type ‘linkedlist::node*’ (maybe you meant to use ‘->’ ?)|
+/home/sid/Documents/DS/1/2.cc|19|error: request for member ‘remove_after’ in ‘prev_i’, which is of pointer type ‘linkedlist::node*’ (maybe you meant to use ‘->’ ?)|
+/home/sid/Documents/DS/1/2.cc|20|error: request for member ‘remove_after’ in ‘prev_j’, which is of pointer type ‘linkedlist::node*’ (maybe you meant to use ‘->’ ?)|
+||=== Build failed: 3 error(s), 0 warning(s) (0 minute(s), 0 second(s)) ===|

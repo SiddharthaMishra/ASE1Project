@@ -16,8 +16,8 @@
 <div class="row ScrollDirec" id="row2">
 </div>
 <div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;">
-  <a class="dropdown-item btn" href="#" onclick="">Delete</a>
-  <a class="dropdown-item btn " id="downloadFile" href="/mainupload/download/">Download</a>
+  <a class="dropdown-item btn" id="deleteFile" onclick="">Delete</a>
+  <a class="dropdown-item btn " id="downloadFile" href="#">Download</a>
   <a class="dropdown-item btn " href="#">Share Link</a>
 </div>
 
@@ -104,7 +104,7 @@ function back_folder(id) {
         // pa='{{ file.file.path }}'
         // name=pa.split("\")
         console.log('{{ file.name }}')
-        addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
+        addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
         {% endfor %}
     }
 }
@@ -150,7 +150,7 @@ function clearall(id, value) {
             }
             console.log(res.files);
             for (i in res.files) {
-                addFile(res.files[i].name, res.files[i].pk, $("#row1"))
+                addFile(res.files[i].name, res.files[i].pk, $("#row1"), res.files[i].protected);
             }
         },
         processData: false,
@@ -164,14 +164,14 @@ function clearall(id, value) {
 
 // Function for adding file
 
-function addFile(name, pk, parent) {
+function addFile(name, pk, parent, protected) {
     if (level == 1) {
 
         parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + root_pk + "_" + level + "_" + pk +
-            "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+            " protected="+protected+"><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
             name + "</p>  </div> </div>");
     } else {
-        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + root_pk + "_" + level + "_" + pk +
+        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2' protected="+protected+"id=file_" + root_pk + "_" + level + "_" + pk +
             "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
             name + "</p>  </div> </div>");
 
@@ -207,7 +207,7 @@ $(document).ready(function() {
     addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
     {% endfor %}
     {% for file in request.user.rootdirectory.files.all %}
-    addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
+    addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
     {% endfor %}
 
     //adding file
@@ -231,7 +231,7 @@ $(document).ready(function() {
                 console.log(res)
                 $('#filesform').val(false);
                 console.log(res);
-                addFile(res.name, res.pk, $("#row1"));
+                addFile(res.name, res.pk, $("#row1"), $("#yes").is(':checked'));
             },
             failure: function (res) {
                 console.log(res);
@@ -256,10 +256,18 @@ $(document).ready(function() {
     });
 
     //Download File
-
+    $("#deleteFile").click(function() {
+        $.ajax({
+            url: "/mainupload/api/"+fileid+'/',
+            type: 'DELETE',
+            success: function (res) {
+                FILE_SELECTED.remove();
+            },
+        });
+    });
     $("#downloadFile").click(function () {
         var button = $("#downloadFile");
-        button.attr("href", "/mainupload/api/download/"+fileid);
+        button.attr("href", "/mainupload/api/"+fileid);
     });
 
 
@@ -301,6 +309,7 @@ $('div').on('click', '.card', function (e) {
     var top = e.pageY - 120;
     console.log(this);
     var left = e.pageX - 200;
+    FILE_SELECTED = $(this);
     var divId = $(this).attr("id");
     $("#context-menu").css({
         display: "block",

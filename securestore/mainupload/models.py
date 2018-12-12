@@ -3,7 +3,11 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from securestore.settings import MEDIA_ROOT
+from django.utils import timezone
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
+import datetime
 import os
 import re
 # Create your models here.
@@ -56,6 +60,7 @@ def content_file_name(instance, filename):
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name)
     protected = models.BooleanField(default=False)
+    uploaded = models.TimeField(default=timezone.now)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -70,3 +75,15 @@ class File(models.Model):
 
     def name(self):
         return "".join(os.path.basename(self.file.name).split('_')[2:])
+
+
+def _delete_file(path):
+    # Deletes file from filesystem.
+    if os.path.isfile(path):
+        os.remove(path)
+
+
+@receiver(pre_delete, sender=File)
+def delete_img_pre_delete_post(sender, instance, *args, **kwargs):
+    if instance.file:
+        _delete_file(instance.file.path)

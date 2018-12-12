@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
-#from django.core.files.storage import fileSystemStorage
+# from django.core.files.storage import fileSystemStorage
 from .serializers import FileSerializer, DirectorySerializer, RootDirectorySerializer,  SubDirSerializer
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -19,43 +19,35 @@ from wsgiref.util import FileWrapper
 
 
 @csrf_exempt
-def download_file(request, pk):
-    file = File.objects.get(pk=pk)
-    if file.get_user != request.user:
-        HttpResponse("Unauthorized", 401)
-
-    wrapper = FileWrapper(file.file)
-    response = HttpResponse(
-        file.file.read(), content_type='application/force-download')
-    response['Content-Disposition'] = 'attachment; filename={}'.format(
-        file.name())
-    print(response['Content-Type'], response['Content-Disposition'])
-    response['Content-Transfer-Encoding'] = "binary"
-    response['Content-Length'] = os.path.getsize(file.file.path)
-    print(response['Content-Length'])
-    return response
-
-
 def index(request):
-    return HttpResponse('hi')
-
-
-def create_file(request):
-    parent_pk = request.POST['parent_pk']
-
-    f = CreateFIle()
-
-    parent.files.create(das)
-
-
-@csrf_exempt
-def create_directory(request):
-    return HttpResponse(request.POST['folder_name'])
+    return HttpResponse(request.user.username)
 
 
 class FileView(CsrfExemptMixin, APIView):
     parser_classes = (MultiPartParser, FormParser)
     authentication_classes = []
+
+    def delete(self, request, pk):
+        f = File.objects.get(pk=pk)
+    #    if f.get_user() != request.user
+        f.delete()
+        return HttpResponse("")
+
+    def get(self, request, pk):
+        file = File.objects.get(pk=pk)
+        print(file.get_user(), request.user)
+
+#        if file.get_user() != request.user:
+#            return HttpResponse("Unauthorized", 401)
+
+        wrapper = FileWrapper(file.file)
+        response = HttpResponse(
+            file.file.read(), content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename={}'.format(
+            file.name())
+        response['Content-Transfer-Encoding'] = "binary"
+        response['Content-Length'] = os.path.getsize(file.file.path)
+        return response
 
     def post(self, request):
         file_serializer = FileSerializer(data=request.data)
@@ -89,7 +81,7 @@ class DirectoryView(CsrfExemptMixin, APIView):
             parent = Directory.objects.get(pk=pk)
             serializer = DirectorySerializer
             user = parent.get_user()
-        if user != request.user:
-            return HttpResponse("401 Unauthorized", 401)
+#        if user != request.user:
+#            return HttpResponse("401 Unauthorized", 401)
         serializer = serializer(parent)
         return Response(serializer.data)
