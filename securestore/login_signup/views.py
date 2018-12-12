@@ -16,7 +16,7 @@ from .models import UserData
 import requests
 from mainupload.models import RootDirectory
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 
 def user_logout(request):
     logout(request)
@@ -61,7 +61,7 @@ def signup(request):
                 to_email = user_form.cleaned_data.get('email')
                 email = EmailMessage(mail_subject, message, to=[to_email])
                 email.send()
-                return HttpResponse("Please click on the link sent to your mail to activate your account")
+                return render(request, 'login_signup/emailsent.html', {})
 
             else:
                 try:
@@ -108,7 +108,7 @@ def user_login(request):
             else:
                 return HttpResponse("Your account was inactive.")
         else:
-           
-            return HttpResponse("Invalid login details given")
+            messages.error(request, 'username or password is not correct')
+            return render(request, 'login_signup/login.html', {})
     else:
         return render(request, 'login_signup/login.html', {})

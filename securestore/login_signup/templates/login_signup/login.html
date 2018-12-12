@@ -368,8 +368,8 @@ iframe {
 </style>
 </head>
 <body >
-<div class="limiter">
-		<div class="container-login100">
+<div class="limiter" >
+		<div class="container-login100" >
 			<div class="wrap-login100">
 				<div class="login100-pic js-tilt" data-tilt>
 					<br><br><br><img src="https://fboverlays.com/pages/assets/frontend/img/previewImage.png" alt="IMG">
@@ -409,8 +409,16 @@ iframe {
 						</a>
 					</div><br>
         <br><br>
-        <br><br>
+
         <br>
+        {% for message in messages %}
+
+                    <div class="alert alert-success">
+
+                        {{ message }}
+
+                    </div>
+            {% endfor %}
                 </form>
             </div>
         </div>
