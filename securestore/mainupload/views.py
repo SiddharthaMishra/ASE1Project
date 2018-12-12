@@ -76,12 +76,14 @@ class DirectoryView(CsrfExemptMixin, APIView):
         if is_directory == 0:
             parent = RootDirectory.objects.get(pk=pk)
             serializer = RootDirectorySerializer
-            user = parent.user
+         #   user = parent.user
         else:
             parent = Directory.objects.get(pk=pk)
             serializer = DirectorySerializer
-            user = parent.get_user()
+         #   user = parent.get_user()
 #        if user != request.user:
 #            return HttpResponse("401 Unauthorized", 401)
         serializer = serializer(parent)
+       # console.log("hi")
+       # console.log(Response(serializer.data))
         return Response(serializer.data)
