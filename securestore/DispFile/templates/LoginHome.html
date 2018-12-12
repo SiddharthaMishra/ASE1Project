@@ -328,7 +328,7 @@ $(document).ready(function() {
     //Adding directory
     $("#newDirec").click(function (e) {
         var data;
-        console.log(ids)
+        console.log(ids);
         data = new FormData(document.getElementById("directories"));
         data.append('parent_is_root', level == 1);
         if (level == 1) {
@@ -370,6 +370,7 @@ $(document).ready(function() {
       }).addClass("show");
       console.log(divId);
       fileid = divId.split('_');
+
       fileid = fileid[fileid.length-1];
       console.log(fileid);
       });
@@ -389,7 +390,7 @@ $(document).ready(function() {
         parent1.empty()
         var subDiv = '<br><br><p>Recent Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
         '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
-          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share File</a></div>'
         parent1.append(subDiv);
       }
 
@@ -436,12 +437,12 @@ $(document).ready(function() {
         parent1.empty()
         var subDiv = '<br><br><p>Shared with me</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
         '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
-          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a id="copy" class="dropdown-item btn " href="#">Make a copy</a></div>'
         parent1.append(subDiv);
       }
 
       $("#sharedwithme-button").click(function() {
-            addSharedWithMe( $("#clearRow"));
+        addSharedWithMe( $("#clearRow"));
         $.ajax({
           url: "{% url 'DispFile:sharedwithme' %} ",
           success: function(res) {
@@ -462,6 +463,17 @@ $(document).ready(function() {
                     },
                 });
             });
+            $("#copy").click(function() {
+                $.ajax({
+                    url: "/mainupload/api/copy/",
+                    type: 'POST',
+                    data: {pk:fileid},
+                    success: function (res) {
+                        console.log(res);
+                    }
+                });
+            });
+
             $("#downloadFile").click(function () {
                 var button = $("#downloadFile");
                 button.attr("href", "/mainupload/api/"+fileid);

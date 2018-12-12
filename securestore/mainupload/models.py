@@ -82,6 +82,9 @@ class SharedFiles(models.Model):
     File = models.ForeignKey(File, on_delete=models.CASCADE)
     User = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ("File", "User")
+
 
 def _delete_file(path):
     # Deletes file from filesystem.

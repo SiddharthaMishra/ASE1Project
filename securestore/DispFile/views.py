@@ -97,12 +97,13 @@ def change_password(request):
         'form': form
     })
 
+
 @csrf_exempt
 def recent(request):
     user = request.user
     print(user)
     files = [f for f in File.objects.all() if f.get_user() == user]
-    files.sort(key = lambda file: file.uploaded)
+    files.sort(key=lambda file: file.uploaded)
     files.reverse()
     files = files[:5]
     res = []
@@ -119,15 +120,13 @@ def recent(request):
 def sharedwithme(request):
     user = request.user
     print(user)
-    files = [f for f in File.objects.all() if f.get_user() == user]
-    files.sort(key = lambda file: file.uploaded)
-    files.reverse()
-    files = files[:5]
+    files = [f for f in SharedFiles.objects.all() if f.User == user]
+    print(files)
     res = []
     for i in files:
         res.append({
-            'name': i.name(),
-            'pk': i.pk,
-            'protected': i.protected
+            'name': i.File.name(),
+            'pk': i.File.pk,
+            'protected': i.File.protected
         })
     return JsonResponse(res, safe=False)
