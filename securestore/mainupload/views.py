@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from braces.views import CsrfExemptMixin
 import json
 import os
+import base64
 from .models import Directory, RootDirectory, File, SharedFiles
 from wsgiref.util import FileWrapper
 from django.contrib.auth.models import User
@@ -37,6 +38,13 @@ def copy_file(request):
         return HttpResponse("done")
     else:
         return HttpResponse("notdone")
+
+
+@csrf_exempt
+def get_filestring(request):
+    file = File.objects.get(pk=request.POST['pk'])
+  #  encoded = base64.encodestring(file.file.read())
+    return HttpResponse(file.file.read())
 
 
 @csrf_exempt

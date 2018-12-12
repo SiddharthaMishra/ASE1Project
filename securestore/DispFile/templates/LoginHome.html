@@ -22,6 +22,7 @@
 </div>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 
 <script>
   var level = 1; //keeping track of id
@@ -210,6 +211,19 @@ function addFile(name, pk, parent, protected) {
     }
 }
 
+function download(filename, text) {
+      // silimar dom usage as above
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+  }
 
 
 // function for adding directory
@@ -233,6 +247,14 @@ function addDirectory(name, pk, parent) {
     num++
 
 }
+    function fname(){
+        var filename = document.getElementById("inputfile").value; //gives us a fake path
+        filename = filename.split("\\");
+        length = Object.keys(filename).length;
+        filename = filename[length-1];
+        return filename
+      // full process runned to get the file name with extension
+    }
 
 //populating in home page
 $(document).ready(function() {
@@ -244,19 +266,45 @@ $(document).ready(function() {
     addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
     {% endfor %}
 
-
+    function fname(){
+        var filename = document.getElementById("inputfile").value; //gives us a fake path
+        filename = filename.split("\\");
+        length = Object.keys(filename).length;
+        filename = filename[length-1];
+        return filename
+      // full process runned to get the file name with extension
+    }
     //adding file
-    $("#new").click(function (e) {
+    function securedFile(filename, key) {
+    var inputfile = document.getElementById("inputfile").files[0]; // another way of getting file name
+    console.log("asd");
+    var fileReader = new FileReader();    //as the per the name
+    fileReader.onload = function(fileLoadedEvent){
+        textFromFileLoaded = fileLoadedEvent.target.result;    // performs the task of retreval of text from the file
+        console.log("aqw");
+        encrypted = CryptoJS.AES.encrypt(textFromFileLoaded, key); //inbuild encrypt function of cryptojs
+        encrypted = encrypted.toString();     //getting object value in string
+        var blob = [
+          new Blob([encrypted]),
+        ];    //this represents file-like object of raw data
+
+        var file = new File(blob,'filename',{
+        });       //file pointer
+
+        //adding file
         var data;
-        console.log("hi");
-        data = new FormData(document.getElementById("filesform"));
+
+        data = new FormData();
+        data.append('file', file, document.getElementById("inputfile").files[0].name);
         data.append('parent_is_root', level == 1)
+
         if (level == 1) {
             data.append('parent_pk', root_pk);
         } else {
             data.append('parent_pk', ids[ids.length - 1]);
         }
         data.append("protected", $("#yes").is(':checked'));
+        console.log("hi");
 
         $.ajax({
             url: "/mainupload/api/files/",
@@ -265,21 +313,69 @@ $(document).ready(function() {
             success: function (res) {
                 console.log(res)
                 $('#filesform').val(false);
+                console.log("asd");
                 console.log(res);
-                addFile(res.name, res.pk, $("#row1"), $("#yes").is(':checked'));
+                addFile(res.name, res.pk, $("#row1"), (res.protected)? "True" : "False");
             },
             failure: function (res) {
-                console.log(res);
+          //      console.log(res);
             },
             cache: false,
             processData: false,
-            contentType: false,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
+            contentType: false
 
         });
+
+    };
+    
+    file=fileReader.readAsText(inputfile, "UTF-8");   // call for reading the file
+    }
+
+  
+
+  function notsecuredFile(fname,key){
+    var data;
+
+    data = new FormData();
+    data.append('file', document.getElementById("inputfile").files[0], document.getElementById("inputfile").files[0].name);
+    data.append('parent_is_root', level == 1)
+
+    if (level == 1) {
+        data.append('parent_pk', root_pk);
+    } else {
+        data.append('parent_pk', ids[ids.length - 1]);
+    }
+    data.append("protected", $("#yes").is(':checked'));
+
+    $.ajax({
+        url: "/mainupload/api/files/",
+        type: 'POST',
+        data: data,
+        success: function (res) {
+            console.log(res)
+            $('#filesform').val(false);
+            addFile(res.name, res.pk, $("#row1"),(res.protected)? "True" : "False");
+        },
+        failure: function (res) {
+            console.log(res);
+        },
+        cache: false,
+        processData: false,
+        contentType: false
     });
+  }
 
-
+  // encrypt data
+  $("#new").click(function(){
+    if (document.getElementById("yes").checked==true){
+      var filename = fname();
+      var key = document.getElementById("filepassword").value;    // the key for the file
+      securedFile(filename,key);
+    }
+    else{
+      notsecuredFile();
+    }
+  })
 
     //Password selection
     $(function () {
@@ -307,8 +403,28 @@ $(document).ready(function() {
     });
 
     $("#downloadFile").click(function () {
+        console.log('A');
+        console.log(FILE_SELECTED.attr("protected"));
         var button = $("#downloadFile");
-        button.attr("href", "/mainupload/api/"+fileid);
+        button.attr("href", "#");
+        if (FILE_SELECTED.attr("protected") == "False") {
+            button.attr("href", "/mainupload/api/"+fileid);
+        }
+        else {
+            $.ajax({
+                url: "/mainupload/api/procfile/",
+                type: 'POST',
+                data: {
+                    'pk' : fileid,
+                },
+                success: function(res) {
+                    console.log(res);
+                    var key = prompt("Enter password");
+                    var decrypted = CryptoJS.AES.decrypt(res, key);
+                    download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                }
+            });
+        }
     });
 
     $('#shareFile').click(function() {
@@ -420,8 +536,14 @@ $(document).ready(function() {
             });
         });
         $("#downloadFile").click(function () {
-            var button = $("#downloadFile");
-            button.attr("href", "/mainupload/api/"+fileid);
+            console.log('B');
+            if (FILE_SELECTED.attr("protected", "False")) {
+                var button = $("#downloadFile");
+                button.attr("href", "/mainupload/api/"+fileid);
+            }
+            else {
+                
+            }
         });
 
           }
@@ -475,8 +597,14 @@ $(document).ready(function() {
             });
 
             $("#downloadFile").click(function () {
-                var button = $("#downloadFile");
-                button.attr("href", "/mainupload/api/"+fileid);
+                console.log('C');
+                if (FILE_SELECTED.attr("protected", "False")) {
+                    var button = $("#downloadFile");
+                    button.attr("href", "/mainupload/api/"+fileid);
+                }
+                else {
+                    
+                }
             });
           }
         });
