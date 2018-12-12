@@ -60,6 +60,8 @@ class FileView(CsrfExemptMixin, APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class DirectoryView(CsrfExemptMixin, APIView):
     authentication_classes = []
 
