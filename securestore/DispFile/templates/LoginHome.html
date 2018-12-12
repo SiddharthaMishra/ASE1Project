@@ -21,6 +21,8 @@
   <a class="dropdown-item btn " id="shareFile" href="#">Share Link</a>
 </div>
 
+
+
 <script>
   var level = 1; //keeping track of id
   var num = 0;
@@ -124,8 +126,8 @@ function back_folder(id) {
     }
 }
 
-function clearall(id, value) {
 
+function clearall(id, value) {
     var parent_id = id.split("_")[3];
     level += 1
     num = 0
@@ -188,9 +190,9 @@ function clearall(id, value) {
 
     });
 
-
-
 }
+
+
 
 // Function for adding file
 
@@ -207,6 +209,8 @@ function addFile(name, pk, parent, protected) {
 
     }
 }
+
+
 
 // function for adding directory
 
@@ -230,7 +234,7 @@ function addDirectory(name, pk, parent) {
 
 }
 
-
+//populating in home page
 $(document).ready(function() {
 
     {% for folder in request.user.rootdirectory.children.all %}
@@ -239,6 +243,7 @@ $(document).ready(function() {
     {% for file in request.user.rootdirectory.files.all %}
     addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
     {% endfor %}
+
 
     //adding file
     $("#new").click(function (e) {
@@ -275,6 +280,7 @@ $(document).ready(function() {
     });
 
 
+
     //Password selection
     $(function () {
         $("input[name='is_protected']").click(function () {
@@ -285,6 +291,7 @@ $(document).ready(function() {
             }
         });
     });
+
 
     //Download File
     $("#deleteFile").click(function() {
@@ -317,8 +324,8 @@ $(document).ready(function() {
         });
     });
 
-    //Adding directory
 
+    //Adding directory
     $("#newDirec").click(function (e) {
         var data;
         console.log(ids)
@@ -348,7 +355,7 @@ $(document).ready(function() {
 
 
 
-
+//Dropdown for delete and download etc
   $('div').on('click', '.card', function (e) {
       console.log("worked")
       var top = e.pageY - 120;
@@ -374,7 +381,98 @@ $(document).ready(function() {
       $("#context-menu a").on("click", function() {
         $(this).parent().removeClass("show").hide();
       });
+
+
+//Recent files
+
+      function addRecent(parent1) {
+        parent1.empty()
+        var subDiv = '<br><br><p>Recent Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        parent1.append(subDiv);
+      }
+
+      //
+      // $("#recent-button").click(function() {
+      //   addRecent($("#clearRow2"),$("#clearRow"));
+      // });
+      $("#recent-button").click(function() {
+          addRecent( $("#clearRow"));
+      //    console.log(user)
+        $.ajax({
+          url: "{% url 'DispFile:Recent' %} ",
+          success: function(res) {
+        for (i=0;i<res.length;i++){
+            console.log(res[i])
+            addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
+        }
+
+
+        $("#deleteFile").click(function() {
+            $.ajax({
+                url: "/mainupload/api/"+fileid+'/',
+                type: 'DELETE',
+                success: function (res) {
+                    FILE_SELECTED.remove();
+                },
+            });
+        });
+        $("#downloadFile").click(function () {
+            var button = $("#downloadFile");
+            button.attr("href", "/mainupload/api/"+fileid);
+        });
+
+          }
+          //
+          // }
+        });
+      })
+
+
+
+//Shared with me files
+      function addSharedWithMe(parent1) {
+        parent1.empty()
+        var subDiv = '<br><br><p>Shared with me</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        parent1.append(subDiv);
+      }
+
+      $("#sharedwithme-button").click(function() {
+            addSharedWithMe( $("#clearRow"));
+        $.ajax({
+          url: "{% url 'DispFile:sharedwithme' %} ",
+          success: function(res) {
+
+            for (i=0;i<res.length;i++){
+                console.log(res[i])
+                addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
+            }
+
+
+            $("#deleteFile").click(function() {
+              console.log("y??")
+                $.ajax({
+                    url: "/mainupload/api/"+fileid+'/',
+                    type: 'DELETE',
+                    success: function (res) {
+                        FILE_SELECTED.remove();
+                    },
+                });
+            });
+            $("#downloadFile").click(function () {
+                var button = $("#downloadFile");
+                button.attr("href", "/mainupload/api/"+fileid);
+            });
+          }
+        });
+      });
+
+
  </script>
+
 
 
 
