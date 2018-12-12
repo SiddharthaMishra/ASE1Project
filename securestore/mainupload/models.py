@@ -46,13 +46,13 @@ def content_file_name(instance, filename):
   #  print(ext)
     filename = "{}_{}_{}".format(
         instance.get_user().pk, instance.directory.pk, filename)
-    fs = File.objects.filter(file=os.path.join('files', filename))
-    ext = filename.split(".")[-1]
-    res = "".join(filename.split(".")[:-1])
-    files = [f for f in os.listdir(os.path.join(MEDIA_ROOT, 'files'))]
-    l = [m for m in files if re.match(res+'\d?\.'+ext+'$', m)]
-    l = len(l)
-    if l > 0:
+    files = os.listdir(os.path.join(MEDIA_ROOT, 'files'))
+    if filename in files:
+        fs = File.objects.filter(file=os.path.join('files', filename))
+        ext = filename.split(".")[-1]
+        res = "".join(filename.split(".")[:-1])
+        l = [m for m in files if re.match(res+'\d?\.'+ext+'$', m)]
+        l = len(l)
         filename = res + str(l) + "." + ext
     return os.path.join('files/', filename)
 

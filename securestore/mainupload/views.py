@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 def share_file(request):
     owner = request.user
     shared_user = User.objects.get(username=request.POST['username'])
-    file = File.object.get(pk=request.POST['file_pk'])
+    file = File.objects.get(pk=request.POST['file_pk'])
     if file.get_user != owner:
         return HttpResponse("Unauthorized", 401)
     SharedFiles.objects.create(File=file, User=shared_user)
@@ -34,14 +34,15 @@ def index(request):
     return HttpResponse(request.user.username)
 
 
-class FileView(APIView):
+class FileView(CsrfExemptMixin, APIView):
+    authentication_classes = []
     parser_classes = (MultiPartParser, FormParser)
 
     def delete(self, request, pk):
         print(request.user)
         f = File.objects.get(pk=pk)
-        if f.get_user() != request.user:
-            return HttpResponse("Unauthorized", 401)
+#        if f.get_user() != request.user:
+#            return HttpResponse("Unauthorized", 401)
         f.delete()
         return HttpResponse("")
 
@@ -49,8 +50,8 @@ class FileView(APIView):
         file = File.objects.get(pk=pk)
         print(file.get_user(), request.user)
 
-        if file.get_user() != request.user:
-            return HttpResponse("Unauthorized", 401)
+#        if file.get_user() != request.user:
+ #           return HttpResponse("Unauthorized", 401)
 
         wrapper = FileWrapper(file.file)
         response = HttpResponse(
@@ -71,7 +72,8 @@ class FileView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class DirectoryView(APIView):
+class DirectoryView(CsrfExemptMixin, APIView):
+    authentication_classes = []
 
     def post(self, request):
         directory_serializer = DirectorySerializer(data=request.data)
@@ -91,8 +93,8 @@ class DirectoryView(APIView):
             parent = Directory.objects.get(pk=pk)
             serializer = DirectorySerializer
             user = parent.get_user()
-        if user != request.user:
-            return HttpResponse("401 Unauthorized", 401)
+#        if user != request.user:
+#            return HttpResponse("401 Unauthorized", 401)
         serializer = serializer(parent)
        # console.log("hi")
        # console.log(Response(serializer.data))
