@@ -334,21 +334,22 @@
     function addStorage(storage, parent1, parent2) {
       parent1.empty()
       parent2.empty()
-      var Storagediv = "<h2> Storage </h2><p>" + storage + "%</p><p>Storage of user is shown</p>"
+      var Storagediv = "<h2> Storage </h2><p>" + storage + "%</p><p>of the storage is left</p>"
       parent2.append(Storagediv);
     }
 
-
     $("#storage-button").click(function() {
       $.ajax({
-        url: "{% url 'DispFile:home' %} ",
-        success: function() {
-          addStorage(90, $("#clearRow2"), $("#clearRow"));
+        url: "/mainupload/api/get_storage/",
+        success: function(res) {
+         // console.log("hello")
+         addStorage(Math.floor(res), $("#clearRow2"), $("#clearRow"));
+        },
+        failure: function(res) {
+          console.log(e);
         }
       });
     });
-
-
 
 
 

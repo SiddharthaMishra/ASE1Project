@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+pylint = "*"
+"pep8" = "*"
+"autopep8" = "*"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+requests = "*"
+django-braces = "*"
+django-crispy-forms = "*"
+haystack = "*"
+django-haystack = "*"
+whoosh = "*"
+
+[requires]
+python_version = "3.6"

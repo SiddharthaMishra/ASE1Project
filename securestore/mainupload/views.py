@@ -54,6 +54,22 @@ def share_file(request):
 
 
 @csrf_exempt
+def get_storage(request):
+    f = [file for file in File.objects.all() if file.get_user() == request.user]
+    sum = 0
+    for file in f:
+      #      print(file.file.path)
+        filesize = os.path.getsize(file.file.path)
+ #       print(filesize)
+        sum += filesize
+    print("sum= ", sum)
+    percent = (sum/(500*1024*1024))*100
+    print("%.2f" % percent)
+    remaining = 100-percent
+    return HttpResponse(remaining)
+
+
+@csrf_exempt
 def index(request):
     return HttpResponse(request.user.username)
 
