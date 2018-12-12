@@ -1,24 +1,31 @@
 
+
+
+
 (function( $ ){
 
-	/* FIXED MENU*/
+
+	/* ----------------------------------------------------------- */
+	/*  2. FIXED MENU
+	/* ----------------------------------------------------------- */
 
 
 	jQuery(window).bind('scroll', function () {
     if ($(window).scrollTop() > 150) {
-        $('#header').addClass('mu-fixed-nav');
-
+        $('#mu-header').addClass('mu-fixed-nav');
+        
 	    } else {
-	        $('#header').removeClass('mu-fixed-nav');
+	        $('#mu-header').removeClass('mu-fixed-nav');
 	    }
 	});
 
-
-
-/* FEATURED SLIDE (SLICK SLIDER) */
+		
+	/* ----------------------------------------------------------- */
+	/*  2. FEATURED SLIDE (SLICK SLIDER)
+	/* ----------------------------------------------------------- */
 
 		$('.mu-featured-slide').slick({
-		  arrows: false,
+		  arrows: true,
 		  dots: true,
 		  infinite: true,
 		  speed: 500,
@@ -26,6 +33,15 @@
 		  cssEase: 'linear'
 		});
 
+
+
+	/* ----------------------------------------------------------- */
+	/*  3. MENU SMOOTH SCROLLING
+	/* ----------------------------------------------------------- */ 
+
+		//MENU SCROLLING WITH ACTIVE ITEM SELECTED
+
+		// Cache selectors
 		var lastId,
 		topMenu = $(".mu-menu"),
 		topMenuHeight = topMenu.outerHeight()+13,
@@ -42,7 +58,7 @@
 		menuItems.click(function(e){
 		  var href = $(this).attr("href"),
 		      offsetTop = href === "#" ? 0 : $(href).offset().top-topMenuHeight+22;
-		  jQuery('html, body').stop().animate({
+		  jQuery('html, body').stop().animate({ 
 		      scrollTop: offsetTop
 		  }, 1500);
 		  e.preventDefault();
@@ -52,7 +68,7 @@
 		jQuery(window).scroll(function(){
 		   // Get container scroll position
 		   var fromTop = $(this).scrollTop()+topMenuHeight;
-
+		   
 		   // Get id of current scroll item
 		   var cur = scrollItems.map(function(){
 		     if ($(this).offset().top < fromTop)
@@ -61,17 +77,27 @@
 		   // Get the id of the current element
 		   cur = cur[cur.length-1];
 		   var id = cur && cur.length ? cur[0].id : "";
-
+		   
 		   if (lastId !== id) {
 		       lastId = id;
 		       // Set/remove active class
 		       menuItems
 		         .parent().removeClass("active")
 		         .end().filter("[href=\\#"+id+"]").parent().addClass("active");
-		   }
+		   }           
 		})
 
 
 
 
+
+
+
+
+	
+	
 })( jQuery );
+
+
+  
+	

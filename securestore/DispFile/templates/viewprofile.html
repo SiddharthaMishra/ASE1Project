@@ -1,0 +1,21 @@
+{% extends 'LoginBase.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <h1>User Profile</h1>
+          <p>Username: {{ user }}</p>
+          <p>Email :  {{ user.email }}</p>
+         <br>
+          <a href="{% url 'DispFile:editprofile' %}">Edit Profile</a><br>
+          <a href="{% url 'DispFile:change_password' %}">Change your password here !</a>
+         
+    </div>
+<script>
+  $(document).ready(function() {
+    $("#SideNavBar").empty()
+    });
+    
+</script>
+{% endblock %}

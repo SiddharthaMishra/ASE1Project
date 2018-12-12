@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	 var arr = ["skp","skp1","skp2","skp3","skp4"]; // List of users
+
 
 	$('.msg_head').click(function(){
 		var chatbox = $(this).parents().attr("rel") ;
@@ -13,14 +13,7 @@ $(document).ready(function(){
 		var chatbox = $(this).parents().parents().attr("rel") ;
 		$('[rel="'+chatbox+'"]').hide();
 		//update require
-		arr.splice($.inArray(chatbox, arr),1);
-		i = 50 ; // start position
-		j = 260;  //next position
-		$.each( arr, function( index, value ) {
-	      $('[rel="'+value+'"]').css("right",i);
-		  i = i+j;
-        });
-
+	  
 		return false;
 	});
 
@@ -35,13 +28,47 @@ $(document).ready(function(){
 			$('<div class="msg-right">'+msg+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
 			$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
 			}
-			if (msg !=0){
-				var w='please signup'
-
+			b=msg.replace(/\s/g, '')
+			a=b.toLowerCase();
+		
+			
+			if(a.includes('hi')==true){
+				var w='Hi user,how can i help u'
 				$('<div class="msg-left">'+w+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
 				$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
 			}
-        }
+			if(a.includes('signup')==true || a.includes('join')==true){
+				
+				var w="U can find it on the navbar at the top";
+				
+
+				$('<div class="msg-left" id="login" on>'+w+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
+
+				$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
+				$("#sign")[0].click();
+			}
+			if(a.includes('login')==true){
+				
+				var w="U can find it on the navbar at the top";
+				
+
+				$('<div class="msg-left" id="login" on>'+w+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
+
+				$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
+				$("#login")[0].click();
+			}
+			if(a.includes('charge')==true){
+				var w='U will be given 15GB data ,for more u need to pay'
+				$('<div class="msg-left">'+w+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
+				$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
+			}
+			
+		   if(a.includes('hi')==false && a.includes('signup')==false && a.includes('join')==false && a.includes('login')==false && a.includes('charge')==false){
+				var w='Sorry we couldnt understand, We will come back to u see soon'
+				$('<div class="msg-left">'+w+'</div>').insertBefore('[rel="'+chatbox+'"] .msg_push');
+				$('.msg_body').scrollTop($('.msg_body')[0].scrollHeight);
+			   }
+			} 
     });
 
 });
