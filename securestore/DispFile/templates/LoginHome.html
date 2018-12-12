@@ -17,7 +17,7 @@
 </div>
 <div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;">
   <a class="dropdown-item btn" href="#" onclick="">Delete</a>
-  <a class="dropdown-item btn " id="downloadFile" href="#">Download</a>
+  <a class="dropdown-item btn " id="downloadFile" href="/mainupload/download/">Download</a>
   <a class="dropdown-item btn " href="#">Share Link</a>
 </div>
 
@@ -258,7 +258,8 @@ $(document).ready(function() {
     //Download File
 
     $("#downloadFile").click(function () {
-
+        var button = $("#downloadFile");
+        button.attr("href", "/mainupload/api/download/"+fileid);
     });
 
 
@@ -287,7 +288,6 @@ $(document).ready(function() {
             },
             processData: false,
             contentType: false
-
         });
     });
   });
@@ -297,9 +297,10 @@ $(document).ready(function() {
 
 
 <script type = "text/javascript" >
-    $('div').on('click', '.card', function (e) {
+$('div').on('click', '.card', function (e) {
     var top = e.pageY - 120;
-    var left = e.pageX - 150;
+    console.log(this);
+    var left = e.pageX - 200;
     var divId = $(this).attr("id");
     $("#context-menu").css({
         display: "block",
@@ -307,14 +308,17 @@ $(document).ready(function() {
         left: left
     }).addClass("show");
     console.log(divId);
+    fileid = divId.split('_');
+    fileid = fileid[fileid.length-1];
+    console.log(fileid);
     });
-    $('#row1,#row2').on("click", function () {
+    $('#row1,#row2').on("click", function() {
         $("#context-menu").removeClass("show").hide();
     });
 
 
-    $("#context-menu a").on("click", function () {
-        $(this).parent().removeClass("show").hide();
+    $("#context-menu a").on("click", function() {
+      $(this).parent().removeClass("show").hide();
     });
 </script>
 

@@ -11,22 +11,28 @@ from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from braces.views import CsrfExemptMixin
 import json
-from .models import Directory, RootDirectory
+import os
+from .models import Directory, RootDirectory, File
+from wsgiref.util import FileWrapper
 
 # Create your views here.
 
 
 @csrf_exempt
-def download_file(request):
-    filepk = int(request.POST['fileid'])
-    file = File.objects.get(pk=filepk)
+def download_file(request, pk):
+    file = File.objects.get(pk=pk)
     if file.get_user != request.user:
-        HttpResponse("Unauthorizd", 401)
-    wrapper = FileWrapper(file)
-    response = HttpResponse(wrapper, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename={}'\
-        .format(file.name())
-    response['Content-Length'] = os.path.getsize(filename)
+        HttpResponse("Unauthorized", 401)
+
+    wrapper = FileWrapper(file.file)
+    response = HttpResponse(
+        file.file.read(), content_type='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename={}'.format(
+        file.name())
+    print(response['Content-Type'], response['Content-Disposition'])
+    response['Content-Transfer-Encoding'] = "binary"
+    response['Content-Length'] = os.path.getsize(file.file.path)
+    print(response['Content-Length'])
     return response
 
 
