@@ -21,6 +21,8 @@
   <a class="dropdown-item btn " id="shareFile" href="#">Share Link</a>
 </div>
 
+
+
 <script>
   var level = 1; //keeping track of id
   var num = 0;
@@ -67,8 +69,8 @@ function back_folder(id) {
         }
 
         var div3 = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
-        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
-          '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile">Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
         $("#clearRow").append(div3)
 
         $.ajax({
@@ -83,17 +85,31 @@ function back_folder(id) {
                 for (i in res.files) {
                     addFile(res.files[i].name, res.files[i].pk, $("#row1"))
                 }
+                $("#deleteFile").click(function() {
+                  console.log("y??")
+                    $.ajax({
+                        url: "/mainupload/api/"+fileid+'/',
+                        type: 'DELETE',
+                        success: function (res) {
+                            FILE_SELECTED.remove();
+                        },
+                    });
+                });
+                $("#downloadFile").click(function () {
+                    var button = $("#downloadFile");
+                    button.attr("href", "/mainupload/api/"+fileid);
+        
+                });
             },
             processData: false,
             contentType: false,
-            csrfmiddlewaretoken: '{{ csrf_token }}',
 
         });
     } else {
         $("#clearRow").empty()
         var div3 = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
-        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
-          '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" onclick="">Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
         $("#clearRow").append(div3)
 
         {% for folder in request.user.rootdirectory.children.all %}
@@ -110,8 +126,8 @@ function back_folder(id) {
     }
 }
 
-function clearall(id, value) {
 
+function clearall(id, value) {
     var parent_id = id.split("_")[3];
     level += 1
     num = 0
@@ -136,8 +152,8 @@ function clearall(id, value) {
     var dir = '<p style="float:left"><span>►</span></p><div style="float:left"><p>' + path[path.length - 1] + '</p></div>'
     $("#clearRow").append(dir);
     var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
-    '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
-      '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+    '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
+      '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
 
     $("#clearRow").append(subDiv)
 
@@ -153,6 +169,20 @@ function clearall(id, value) {
             for (i in res.files) {
                 addFile(res.files[i].name, res.files[i].pk, $("#row1"), res.files[i].protected);
             }
+            $("#deleteFile").click(function() {
+              console.log("y??")
+                $.ajax({
+                    url: "/mainupload/api/"+fileid+'/',
+                    type: 'DELETE',
+                    success: function (res) {
+                        FILE_SELECTED.remove();
+                    },
+                });
+            });
+            $("#downloadFile").click(function () {
+                var button = $("#downloadFile");
+                button.attr("href", "/mainupload/api/"+fileid);
+            });
         },
         processData: false,
         contentType: false,
@@ -160,9 +190,9 @@ function clearall(id, value) {
 
     });
 
-
-
 }
+
+
 
 // Function for adding file
 
@@ -173,12 +203,14 @@ function addFile(name, pk, parent, protected) {
             " protected="+protected+"><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
             name + "</p>  </div> </div>");
     } else {
-        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2' protected="+protected+"id=file_" + root_pk + "_" + level + "_" + pk +
-            "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2' id=file_" + root_pk + "_" + level + "_" + pk +
+            " protected="+protected+"> <img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
             name + "</p>  </div> </div>");
 
     }
 }
+
+
 
 // function for adding directory
 
@@ -202,7 +234,7 @@ function addDirectory(name, pk, parent) {
 
 }
 
-
+//populating in home page
 $(document).ready(function() {
 
     {% for folder in request.user.rootdirectory.children.all %}
@@ -211,6 +243,7 @@ $(document).ready(function() {
     {% for file in request.user.rootdirectory.files.all %}
     addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
     {% endfor %}
+
 
     //adding file
     $("#new").click(function (e) {
@@ -247,6 +280,7 @@ $(document).ready(function() {
     });
 
 
+
     //Password selection
     $(function () {
         $("input[name='is_protected']").click(function () {
@@ -258,8 +292,10 @@ $(document).ready(function() {
         });
     });
 
+
     //Download File
     $("#deleteFile").click(function() {
+      console.log("y??")
         $.ajax({
             url: "/mainupload/api/"+fileid+'/',
             type: 'DELETE',
@@ -276,23 +312,23 @@ $(document).ready(function() {
     });
 
     $('#shareFile').click(function() {
-        var uname = alert("Enter username");
+        var uname = prompt("Enter username");
         $.ajax({
             url: "/mainupload/api/share/",
             type: 'POST',
             data: {
                 'username' : uname,
-                'file_pk' : fileid
+                'file_pk' : fileid,
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
             },
-            csrfmiddlewaretoken: '{{ csrf_token }}',
         });
     });
 
-    //Adding directory
 
+    //Adding directory
     $("#newDirec").click(function (e) {
         var data;
-        console.log(ids)
+        console.log(ids);
         data = new FormData(document.getElementById("directories"));
         data.append('parent_is_root', level == 1);
         if (level == 1) {
@@ -300,7 +336,6 @@ $(document).ready(function() {
         } else {
             data.append('parent_id', ids[ids.length - 1]);
         }
-
         // console.log(object)
         $.ajax({
             url: "/mainupload/api/",
@@ -309,42 +344,153 @@ $(document).ready(function() {
             success: function (res) {
                 console.log(res);
                 addDirectory(res.name, res.pk, $("#row2"));
-
             },
             processData: false,
             contentType: false,
-            csrfmiddlewaretoken: '{{ csrf_token }}',
         });
     });
   });
 
+
+
+
+
+//Dropdown for delete and download etc
+  $('div').on('click', '.card', function (e) {
+      console.log("worked")
+      var top = e.pageY - 120;
+      console.log(this);
+      var left = e.pageX - 200;
+      FILE_SELECTED = $(this);
+      var divId = $(this).attr("id");
+      $("#context-menu").css({
+          display: "block",
+          top: top,
+          left: left
+      }).addClass("show");
+      console.log(divId);
+      fileid = divId.split('_');
+
+      fileid = fileid[fileid.length-1];
+      console.log(fileid);
+      });
+      $('.row').on("click", function() {
+          $("#context-menu").removeClass("show").hide();
+      });
+
+
+      $("#context-menu a").on("click", function() {
+        $(this).parent().removeClass("show").hide();
+      });
+
+
+//Recent files
+
+      function addRecent(parent1) {
+        parent1.empty()
+        var subDiv = '<br><br><p>Recent Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a class="dropdown-item btn " href="#">Share File</a></div>'
+        parent1.append(subDiv);
+      }
+
+      //
+      // $("#recent-button").click(function() {
+      //   addRecent($("#clearRow2"),$("#clearRow"));
+      // });
+      $("#recent-button").click(function() {
+          addRecent( $("#clearRow"));
+      //    console.log(user)
+        $.ajax({
+          url: "{% url 'DispFile:Recent' %} ",
+          success: function(res) {
+        for (i=0;i<res.length;i++){
+            console.log(res[i])
+            addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
+        }
+
+
+        $("#deleteFile").click(function() {
+            $.ajax({
+                url: "/mainupload/api/"+fileid+'/',
+                type: 'DELETE',
+                success: function (res) {
+                    FILE_SELECTED.remove();
+                },
+            });
+        });
+        $("#downloadFile").click(function () {
+            var button = $("#downloadFile");
+            button.attr("href", "/mainupload/api/"+fileid);
+        });
+
+          }
+          //
+          // }
+        });
+      })
+
+
+
+//Shared with me files
+      function addSharedWithMe(parent1) {
+        parent1.empty()
+        var subDiv = '<br><br><p>Shared with me</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" id="deleteFile" >Delete</a>'+
+          '<a class="dropdown-item btn " id="downloadFile" >Download</a><a id="copy" class="dropdown-item btn " href="#">Make a copy</a></div>'
+        parent1.append(subDiv);
+      }
+
+      $("#sharedwithme-button").click(function() {
+        addSharedWithMe( $("#clearRow"));
+        $.ajax({
+          url: "{% url 'DispFile:sharedwithme' %} ",
+          success: function(res) {
+
+            for (i=0;i<res.length;i++){
+                console.log(res[i])
+                addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
+            }
+
+
+            $("#deleteFile").click(function() {
+              console.log("y??")
+                $.ajax({
+                    url: "/mainupload/api/"+fileid+'/',
+                    type: 'DELETE',
+                    success: function (res) {
+                        FILE_SELECTED.remove();
+                    },
+                });
+            });
+            $("#copy").click(function() {
+                $.ajax({
+                    url: "/mainupload/api/copy/",
+                    type: 'POST',
+                    data: {pk:fileid},
+                    success: function (res) {
+                        console.log(res);
+                    }
+                });
+            });
+
+            $("#downloadFile").click(function () {
+                var button = $("#downloadFile");
+                button.attr("href", "/mainupload/api/"+fileid);
+            });
+          }
+        });
+      });
+
+
  </script>
 
-<script type = "text/javascript" >
-$('div').on('click', '.card', function (e) {
-    var top = e.pageY - 120;
-    console.log("HO" , this);
-    var left = e.pageX - 200;
-    FILE_SELECTED = $(this);
-    var divId = $(this).attr("id");
-    $("#context-menu").css({
-        display: "block",
-        top: top,
-        left: left
-    }).addClass("show");
-   // console.log(divId);
-    fileid = divId.split('_');
-    fileid = fileid[fileid.length-1];
-   // console.log(fileid);
-    });
-    $('#row1,#row2').on("click", function() {
-        $("#context-menu").removeClass("show").hide();
-    });
 
 
-    $("#context-menu a").on("click", function() {
-      $(this).parent().removeClass("show").hide();
-    });
-</script>
+
+<!-- <script type = "text/javascript" >
+
+
+</script> -->
 
 {% endblock %}

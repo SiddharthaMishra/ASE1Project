@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.generic.detail import DetailView
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,7 @@ from django.contrib import messages
 from DispFile.forms import UserForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
+from mainupload.models import *
 
 # Create your views here.
 
@@ -95,3 +96,37 @@ def change_password(request):
     return render(request, 'change_password.html', {
         'form': form
     })
+
+
+@csrf_exempt
+def recent(request):
+    user = request.user
+    print(user)
+    files = [f for f in File.objects.all() if f.get_user() == user]
+    files.sort(key=lambda file: file.uploaded)
+    files.reverse()
+    files = files[:5]
+    res = []
+    for i in files:
+        res.append({
+            'name': i.name(),
+            'pk': i.pk,
+            'protected': i.protected
+        })
+    return JsonResponse(res, safe=False)
+
+
+@csrf_exempt
+def sharedwithme(request):
+    user = request.user
+    print(user)
+    files = [f for f in SharedFiles.objects.all() if f.User == user]
+    print(files)
+    res = []
+    for i in files:
+        res.append({
+            'name': i.File.name(),
+            'pk': i.File.pk,
+            'protected': i.File.protected
+        })
+    return JsonResponse(res, safe=False)
