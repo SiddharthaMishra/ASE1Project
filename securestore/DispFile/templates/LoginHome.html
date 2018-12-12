@@ -17,11 +17,9 @@
 </div>
 <div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;">
   <a class="dropdown-item btn" href="#" onclick="">Delete</a>
-  <a class="dropdown-item btn " href="#">Download</a>
+  <a class="dropdown-item btn " id="downloadFile" href="#">Download</a>
   <a class="dropdown-item btn " href="#">Share Link</a>
 </div>
-
-
 
 <script>
   var level = 1; //keeping track of id
@@ -50,93 +48,91 @@
   }
 
   // function for entering into a sud directory
-function back_folder(id){
+function back_folder(id) {
     ids.pop()
     path.pop()
-    present_id=id.split("_")
-    level=level-1
+    present_id = id.split("_")
+    level = level - 1
     console.log(ids)
     console.log(ids.length)
     console.log(path.length)
-    root_directory=root_pk
-    sub_directory=ids[ids.length-1]
-  if (ids.length>1){
-    console.log("worked")
-    $("#clearRow").empty()
-    for (var i = 1; i < path.length-1; i++) {
-      var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
-      $("#clearRow").append(div);
-      var dir='<p style="float:left"><span>►</span></p><div style="float:left"><p>'+path[path.length-1]+'</p></div><br>'
-      $("#clearRow").append(dir);
+    root_directory = root_pk
+    sub_directory = ids[ids.length - 1]
+    if (ids.length > 1) {
+        console.log("worked")
+        $("#clearRow").empty()
+        for (var i = 1; i < path.length; i++) {
+            var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div><br><br>'
+            $("#clearRow").append(div);
+        }
+
+        var div3 = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
+          '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        $("#clearRow").append(div3)
+
+        $.ajax({
+            url: "/mainupload/api/" + root_directory + "/" + sub_directory + "",
+            type: 'GET',
+            success: function (res) {
+                console.log(res.children[0]);
+                console.log(res.files[0]);
+                for (i in res.children) {
+                    addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
+                }
+                for (i in res.files) {
+                    addFile(res.files[i].name, res.files[i].pk, $("#row1"))
+                }
+            },
+            processData: false,
+            contentType: false
+
+        });
+    } else {
+        $("#clearRow").empty()
+        var div3 = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
+        '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
+          '<a class="dropdown-item btn " href="#">Download</a><a class="dropdown-item btn " href="#">Share Link</a></div>'
+        $("#clearRow").append(div3)
+
+        {% for folder in request.user.rootdirectory.children.all %}
+        addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
+        {% endfor %}
+
+        {% for file in request.user.rootdirectory.files.all %}
+        //
+        // pa='{{ file.file.path }}'
+        // name=pa.split("\")
+        console.log('{{ file.name }}')
+        addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
+        {% endfor %}
     }
-
-    var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
-      +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
-      +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
-    $("#clearRow").append(div3)
-
-    $.ajax({
-      url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
-      type: 'GET',
-      success: function(res) {
-        console.log(res.children[0]);
-        console.log(res.files[0]);
-         for (i in res.children)
-         {
-            addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
-         }
-         for (i in res.files)
-         {
-           addFile(res.files[i].name,res.files[i].pk,$("#row1"))
-         }
-      },
-      processData: false,
-      contentType: false
-
-    });
-  }
-    else{
-      $("#clearRow").empty()
-      var div3 = '<p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>' +
-        +'<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item" href="#">Action</a>' +
-        +'<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>'
-      $("#clearRow").append(div3)
-    {% for folder in request.user.rootdirectory.children.all %}
-    addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
-    {% endfor %}
-    {% for file in request.user.rootdirectory.files.all %}
-   //
-    // pa='{{ file.file.path }}'
-    // name=pa.split("\")
-    // console.log(name)
-    addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
-   {% endfor %}
 }
-}
-  function clearall(id, value) {
+
+function clearall(id, value) {
 
     var parent_id = id.split("_")[3];
     level += 1
     num = 0
     if (level == 1) {
-      path.push(value)
+        path.push(value)
     } else {
-     path.push(value)
+        path.push(value)
 
     }
-     ids.push(parent_id)
-     console.log(ids);
-     root_directory=root_pk
-     sub_directory=ids[ids.length-1]
+    ids.push(parent_id)
+    console.log(ids);
+    root_directory = root_pk
+    sub_directory = ids[ids.length - 1]
 
     $("#clearRow").empty()
     // var div = '<div> <button id="back" class="btn btn-secondary  previous round text-right">&#8249;</button></div>'
     console.log(path)
-    for (var i = 1; i < path.length-1; i++) {
-      var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
-      $("#clearRow").append(div);
+    for (var i = 1; i < path.length - 1; i++) {
+        var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
+        $("#clearRow").append(div);
     }
-    var dir='<p style="float:left"><span>►</span></p><div style="float:left"><p>'+path[path.length-1]+'</p></div>'
+    var dir = '<p style="float:left"><span>►</span></p><div style="float:left"><p>' + path[path.length - 1] + '</p></div>'
     $("#clearRow").append(dir);
     var subDiv = '<br><br><p>Files</p> <hr><div class="row ScrollFile" id="row1" ></div><br><br><br><p>Folders</p><hr><div class="row ScrollDirec" id="row2"></div>'+
     '<div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;"><a class="dropdown-item btn" href="#" onclick="">Delete</a>'+
@@ -145,186 +141,181 @@ function back_folder(id){
     $("#clearRow").append(subDiv)
 
     $.ajax({
-      url: "/mainupload/api/"+root_directory+"/"+sub_directory+"",
-      type: 'GET',
-      success: function(res) {
-        console.log(res.children[0]);
-         for (i in res.children)
-         {
-            addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
-         }
-         for (i in res.files){
-           addFile(res.files[i].name,res.files[i].pk,$("#row1"))
-         }
-      },
-      processData: false,
-      contentType: false
+        url: "/mainupload/api/" + root_directory + "/" + sub_directory + "",
+        type: 'GET',
+        success: function (res) {
+            console.log(res.children[0]);
+            for (i in res.children) {
+                addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
+            }
+            console.log(res.files);
+            for (i in res.files) {
+                addFile(res.files[i].name, res.files[i].pk, $("#row1"))
+            }
+        },
+        processData: false,
+        contentType: false
 
     });
 
 
 
-  }
+}
 
-  // Function for adding file
+// Function for adding file
 
-  function addFile(name, pk, parent) {
+function addFile(name, pk, parent) {
     if (level == 1) {
 
-      parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_"  + root_pk+"_"+ level + "_" + pk +
-        "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
-        name + "</p>  </div> </div>");
+        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + root_pk + "_" + level + "_" + pk +
+            "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+            name + "</p>  </div> </div>");
     } else {
-      parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_"  +root_pk+"_"+level + "_" + pk +
-        "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
-        name + "</p>  </div> </div>");
+        parent.append(" <div style='margin-right: 30px; margin-bottom: 30px; width: 8rem;' class='card text-center bg-light border-light' class='col-sm-2'  id=file_" + root_pk + "_" + level + "_" + pk +
+            "><img class='card-img-top' src= {% static 'img_avatar4.png' %} alt='Card image' style='width:120px;word-wrap: break-word;'> <div class='card-body'>  <p class='card-text'>" +
+            name + "</p>  </div> </div>");
 
     }
-  }
+}
 
-  // function for adding directory
+// function for adding directory
 
-  function addDirectory(name, pk, parent) {
+function addDirectory(name, pk, parent) {
     var id
     if (level == 1) {
-      var div = "<div  ><p style='padding:10px' > <button id='fol_" + root_pk+"_"+ level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
-        "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
-        name +
-        "</span></button></p></div>"
-      parent.append(div);
+        var div = "<div  ><p style='padding:10px' > <button id='fol_" + root_pk + "_" + level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
+            "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
+            name +
+            "</span></button></p></div>"
+        parent.append(div);
     } else {
-      var div = "<div ><p style='padding:10px' > <button id='fol_" +root_pk+"_"+ level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
-        "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
-        name +
-        "</span></button></p></div>"
-      parent.append(div);
+        var div = "<div ><p style='padding:10px' > <button id='fol_" + root_pk + "_" + level + "_" + pk + "' class='btn btn-light btn-lg btn2 text-left' value='" + name +
+            "' ondblclick=' id = clickMe(this);console.log(id);clearall(id,this.value)'> <i  class='fa fa-folder'></i>  <span>" +
+            name +
+            "</span></button></p></div>"
+        parent.append(div);
 
     }
     num++
 
-  }
+}
 
 
-  $(document).ready(function() {
+$(document).ready(function() {
 
     {% for folder in request.user.rootdirectory.children.all %}
     addDirectory('{{folder.name}}', '{{folder.pk}}', $("#row2"));
     {% endfor %}
-     {% for file in request.user.rootdirectory.files.all %}
-    //
-     // pa='{{ file.file.path }}'
-     // name=pa.split("\")
-     // console.log(name)
-     addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
+    {% for file in request.user.rootdirectory.files.all %}
+    addFile('{{ file.name }}', '{{file.pk}}', $("#row1"));
     {% endfor %}
 
     //adding file
-    $("#new").click(function(e) {
-      var data;
-      data = new FormData(document.getElementById("filesform"));
-      data.append('parent_is_root',level == 1)
-      if (level == 1){
-      data.append('parent_pk',root_pk);
-      }
-      else{
-      data.append('parent_pk', ids[ids.length-1]);
-    }
-      $.ajax({
-        url: "mainupload/api/files/ ",
-        type: 'POST',
-        data: data,
-        success: function(res) {
-          console.log(res)
-          $('#filesform').val('');
-          console.log(res);
-            addFile(res.name, res.pk, $("#row1"));
+    $("#new").click(function (e) {
+        var data;
+        console.log("hi");
+        data = new FormData(document.getElementById("filesform"));
+        data.append('parent_is_root', level == 1)
+        if (level == 1) {
+            data.append('parent_pk', root_pk);
+        } else {
+            data.append('parent_pk', ids[ids.length - 1]);
+        }
+        data.append("protected", $("#yes").is(':checked'));
 
+        $.ajax({
+            url: "/mainupload/api/files/",
+            type: 'POST',
+            data: data,
+            success: function (res) {
+                console.log(res)
+                $('#filesform').val(false);
+                console.log(res);
+                addFile(res.name, res.pk, $("#row1"));
+            },
+            failure: function (res) {
+                console.log(res);
+            },
+            cache: false,
+            processData: false,
+            contentType: false
 
-        },
-        cache: false,
-        processData: false,
-        contentType: false
-
-      });
+        });
     });
 
 
     //Password selection
-    $(function() {
-      $("input[name='optradio']").click(function() {
-        if ($("#yes").is(":checked")) {
-          $("#ShowHide").show();
-        } else {
-          $("#ShowHide").hide();
-        }
-      });
+    $(function () {
+        $("input[name='is_protected']").click(function () {
+            if ($("#yes").is(":checked")) {
+                $("#ShowHide").show();
+            } else {
+                $("#ShowHide").hide();
+            }
+        });
+    });
+
+    //Download File
+
+    $("#downloadFile").click(function () {
+
     });
 
 
     //Adding directory
 
-    $("#newDirec").click(function(e) {
-      var data;
-      console.log(ids)
-      data = new FormData(document.getElementById("directories"));
-      data.append('parent_is_root', level == 1);
-      if (level == 1){
-      data.append('parent_id',root_pk);
-      }
-      else{
-      data.append('parent_id', ids[ids.length-1]);
-    }
+    $("#newDirec").click(function (e) {
+        var data;
+        console.log(ids)
+        data = new FormData(document.getElementById("directories"));
+        data.append('parent_is_root', level == 1);
+        if (level == 1) {
+            data.append('parent_id', root_pk);
+        } else {
+            data.append('parent_id', ids[ids.length - 1]);
+        }
 
-      // console.log(object)
-      $.ajax({
-        url: "/mainupload/api/",
-        type: 'POST',
-        data: data,
-        success: function(res) {
-          console.log(res);
-            addDirectory(res.name, res.pk, $("#row2"));
+        // console.log(object)
+        $.ajax({
+            url: "/mainupload/api/",
+            type: 'POST',
+            data: data,
+            success: function (res) {
+                console.log(res);
+                addDirectory(res.name, res.pk, $("#row2"));
 
-        },
-        processData: false,
-        contentType: false
+            },
+            processData: false,
+            contentType: false
 
-      });
+        });
     });
   });
 
+ </script>
 
 
-//   $('div').click(function() {
-// var divId = $(this).attr("id");
-// console.log(this.id)
-// console.log(divId)
-//
-// });
 
-</script>
-
-<script type="text/javascript">
-  $('div').on('click', '.card', function(e)
-  {
+<script type = "text/javascript" >
+    $('div').on('click', '.card', function (e) {
     var top = e.pageY - 120;
-    var left = e.pageX - 200;
-var divId = $(this).attr("id");
-$("#context-menu").css({
-  display: "block",
-  top: top,
-  left: left
-}).addClass("show");
+    var left = e.pageX - 150;
+    var divId = $(this).attr("id");
+    $("#context-menu").css({
+        display: "block",
+        top: top,
+        left: left
+    }).addClass("show");
+    console.log(divId);
+    });
+    $('#row1,#row2').on("click", function () {
+        $("#context-menu").removeClass("show").hide();
+    });
 
-console.log(divId)
-});
-$('#row1,#row2').on("click", function() {
-  $("#context-menu").removeClass("show").hide();
-});
 
-
-$("#context-menu a").on("click", function() {
-  $(this).parent().removeClass("show").hide();
-});
+    $("#context-menu a").on("click", function () {
+        $(this).parent().removeClass("show").hide();
+    });
 </script>
 
 {% endblock %}

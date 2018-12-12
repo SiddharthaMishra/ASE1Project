@@ -176,6 +176,11 @@
                 <a class="nav-link tes" href="{% url 'DispFile:home' %} "><span class="text-muted">Home</span></a>
               </li>
             </ul>
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link tes" href="{% url 'DispFile:viewprofile' %} "><span class="text-muted">My Profile</span></a>
+              </li>
+            </ul>
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'DispFile:help' %}"><span class="text-muted">Help</span></a>
@@ -265,21 +270,16 @@
 
                   <input type="file" class="col-form-label" id="input-file" name="file" multiple>
                   <br>
-                  <br>
-                  <label for="name" class="col-form-label">File Name:</label>
-                  <br>
-
-                  <input type="text" id="file-name" name="filename" class="form-control" placeholder="Enter FileName" required>
                   <div id="ShowHide">
                     <label for="password" class="col-form-label">Password:</label>
                     <input type="password" class="form-control" placeholder="Enter Password" name="psw" id="file-password" required>
                   </div>
                   <br>
                   <label class="radio-inline" for="yes">
-                    <input type="radio" name="optradio" id="yes" value="option1" checked>Secured
+                    <input type="radio" name="is_protected" id="yes" value="true" checked>Secured
                   </label>
                   <label class="radio-inline" for="no">
-                    <input type="radio" name="optradio" id="no" value="option2">NotSecured
+                    <input type="radio" name="is_protected" id="no" value="false">NotSecured
                   </label>
                 </div>
               </form>
