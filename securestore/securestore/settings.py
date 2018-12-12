@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'login_signup.apps.LoginSignupConfig',
     'DispFile',
     'crispy_forms',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [

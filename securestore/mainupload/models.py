@@ -35,7 +35,7 @@ class Directory(models.Model):
     parent = GenericForeignKey('content_type', 'object_id')
 
     def get_user(self):
-        dir = self.directory
+        dir = self.parent
         while not isinstance(dir, RootDirectory):
             dir = dir.parent
 
@@ -58,6 +58,7 @@ def content_file_name(instance, filename):
 
 
 class File(models.Model):
+
     file = models.FileField(upload_to=content_file_name)
     protected = models.BooleanField(default=False)
     uploaded = models.TimeField(default=timezone.now)
@@ -75,6 +76,11 @@ class File(models.Model):
 
     def name(self):
         return "".join(os.path.basename(self.file.name).split('_')[2:])
+
+
+class SharedFiles(models.Model):
+    File = models.ForeignKey(File, on_delete=models.CASCADE)
+    User = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 def _delete_file(path):

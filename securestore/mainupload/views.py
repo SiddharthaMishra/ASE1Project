@@ -12,10 +12,21 @@ from django.views.decorators.csrf import csrf_exempt
 from braces.views import CsrfExemptMixin
 import json
 import os
-from .models import Directory, RootDirectory, File
+from .models import Directory, RootDirectory, File, SharedFiles
 from wsgiref.util import FileWrapper
+from django.contrib.auth.models import User
 
 # Create your views here.
+
+
+@csrf_exempt
+def share_file(request):
+    owner = request.user
+    shared_user = User.objects.get(username=request.POST['username'])
+    file = File.object.get(pk=request.POST['file_pk'])
+    if file.get_user != owner:
+        return HttpResponse("Unauthorized", 401)
+    SharedFiles.objects.create(File=file, User=shared_user)
 
 
 @csrf_exempt
@@ -23,13 +34,14 @@ def index(request):
     return HttpResponse(request.user.username)
 
 
-class FileView(CsrfExemptMixin, APIView):
+class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    authentication_classes = []
 
     def delete(self, request, pk):
+        print(request.user)
         f = File.objects.get(pk=pk)
-    #    if f.get_user() != request.user
+        if f.get_user() != request.user:
+            return HttpResponse("Unauthorized", 401)
         f.delete()
         return HttpResponse("")
 
@@ -37,15 +49,14 @@ class FileView(CsrfExemptMixin, APIView):
         file = File.objects.get(pk=pk)
         print(file.get_user(), request.user)
 
-#        if file.get_user() != request.user:
-#            return HttpResponse("Unauthorized", 401)
+        if file.get_user() != request.user:
+            return HttpResponse("Unauthorized", 401)
 
         wrapper = FileWrapper(file.file)
         response = HttpResponse(
             file.file.read(), content_type='application/force-download')
         response['Content-Disposition'] = 'attachment; filename={}'.format(
             file.name())
-        response['Content-Transfer-Encoding'] = "binary"
         response['Content-Length'] = os.path.getsize(file.file.path)
         return response
 
@@ -60,8 +71,7 @@ class FileView(CsrfExemptMixin, APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class DirectoryView(CsrfExemptMixin, APIView):
-    authentication_classes = []
+class DirectoryView(APIView):
 
     def post(self, request):
         directory_serializer = DirectorySerializer(data=request.data)
@@ -76,13 +86,13 @@ class DirectoryView(CsrfExemptMixin, APIView):
         if is_directory == 0:
             parent = RootDirectory.objects.get(pk=pk)
             serializer = RootDirectorySerializer
-         #   user = parent.user
+            user = parent.user
         else:
             parent = Directory.objects.get(pk=pk)
             serializer = DirectorySerializer
-         #   user = parent.get_user()
-#        if user != request.user:
-#            return HttpResponse("401 Unauthorized", 401)
+            user = parent.get_user()
+        if user != request.user:
+            return HttpResponse("401 Unauthorized", 401)
         serializer = serializer(parent)
        # console.log("hi")
        # console.log(Response(serializer.data))

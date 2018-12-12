@@ -18,7 +18,7 @@
 <div class="dropdown-menu dropdown-menu-sm" id="context-menu" style="display: none; top: 49px; left: 173px;">
   <a class="dropdown-item btn" id="deleteFile" onclick="">Delete</a>
   <a class="dropdown-item btn " id="downloadFile" href="#">Download</a>
-  <a class="dropdown-item btn " href="#">Share Link</a>
+  <a class="dropdown-item btn " id="shareFile" href="#">Share Link</a>
 </div>
 
 <script>
@@ -85,7 +85,8 @@ function back_folder(id) {
                 }
             },
             processData: false,
-            contentType: false
+            contentType: false,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
 
         });
     } else {
@@ -154,7 +155,8 @@ function clearall(id, value) {
             }
         },
         processData: false,
-        contentType: false
+        contentType: false,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
 
     });
 
@@ -238,7 +240,8 @@ $(document).ready(function() {
             },
             cache: false,
             processData: false,
-            contentType: false
+            contentType: false,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
 
         });
     });
@@ -263,13 +266,27 @@ $(document).ready(function() {
             success: function (res) {
                 FILE_SELECTED.remove();
             },
+            csrfmiddlewaretoken: '{{ csrf_token }}',
         });
     });
+
     $("#downloadFile").click(function () {
         var button = $("#downloadFile");
         button.attr("href", "/mainupload/api/"+fileid);
     });
 
+    $('#shareFile').click(function() {
+        var uname = alert("Enter username");
+        $.ajax({
+            url: "/mainupload/api/share/",
+            type: 'POST',
+            data: {
+                'username' : uname,
+                'file_pk' : fileid
+            },
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        });
+    });
 
     //Adding directory
 
@@ -295,19 +312,18 @@ $(document).ready(function() {
 
             },
             processData: false,
-            contentType: false
+            contentType: false,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
         });
     });
   });
 
  </script>
 
-
-
 <script type = "text/javascript" >
 $('div').on('click', '.card', function (e) {
     var top = e.pageY - 120;
-    console.log(this);
+    console.log("HO" , this);
     var left = e.pageX - 200;
     FILE_SELECTED = $(this);
     var divId = $(this).attr("id");
@@ -316,10 +332,10 @@ $('div').on('click', '.card', function (e) {
         top: top,
         left: left
     }).addClass("show");
-    console.log(divId);
+   // console.log(divId);
     fileid = divId.split('_');
     fileid = fileid[fileid.length-1];
-    console.log(fileid);
+   // console.log(fileid);
     });
     $('#row1,#row2').on("click", function() {
         $("#context-menu").removeClass("show").hide();
