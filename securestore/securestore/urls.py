@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +25,5 @@ urlpatterns = [
     path('', include('DispFile.urls')),
     path('', include('login_signup.urls')),
     path('mainupload/', include('mainupload.urls')),
+    url('^', include('django.contrib.auth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    

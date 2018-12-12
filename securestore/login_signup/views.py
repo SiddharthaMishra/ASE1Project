@@ -28,7 +28,7 @@ def signup(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        if user_form.is_valid():
+        if user_form.is_valid()and user_form.cleaned_data['password'] == user_form.cleaned_data['confirm_password']:
             user = user_form.save(commit=False)
             user.is_active = False
             user.set_password(user.password)
@@ -72,9 +72,9 @@ def signup(request):
                 except Exception as e:
                     return render(request, 'login_signup/signup.html', {'user_form': user_form})
                 return HttpResponse('The email given is invalid please check it ')
-
-        else:
-            print(user_form.errors)
+        elif user_form.data['password'] != user_form.data['confirm_password']:
+                 user_form.add_error('confirm_password', 'The passwords do not match')
+       
     else:
         user_form = UserForm()
     return render(request, 'login_signup/signup.html', {'user_form': user_form, 'registered': registered})
@@ -108,9 +108,7 @@ def user_login(request):
             else:
                 return HttpResponse("Your account was inactive.")
         else:
-            print("Someone tried to login and failed.")
-            print("They used username: {} and password: {}".format(
-                username, password))
+           
             return HttpResponse("Invalid login details given")
     else:
         return render(request, 'login_signup/login.html', {})

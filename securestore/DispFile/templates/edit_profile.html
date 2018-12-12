@@ -1,0 +1,14 @@
+{% extends 'LoginBase.html' %}
+
+{% block content %}
+      
+      <h1>Edit Your Profile</h1>
+      <div>
+          <form method="POST"enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ user_form.as_p}}
+                <button type="submit" >Submit</button>      
+          </form>
+          <br>
+      </div>
+{% endblock %}

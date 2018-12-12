@@ -1,8 +1,10 @@
-
+from django.contrib import admin
 from django.urls import path
 from . import views
-app_name="blog"
+from django.conf.urls import url, include
+app_name = "blog"
 urlpatterns = [
-
-    path('', views.main_page,name='main_page'),
+    path('admin/', admin.site.urls),
+    url('^#', include('django.contrib.auth.urls')),
+    path('', views.main_page, name='main_page'),
 ]
