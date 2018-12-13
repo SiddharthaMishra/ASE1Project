@@ -25,6 +25,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 
 <script>
+
   var level = 1; //keeping track of id
   var num = 0;
   var root_pk;
@@ -56,13 +57,13 @@ function back_folder(id) {
     path.pop()
     present_id = id.split("_")
     level = level - 1
-    console.log(ids)
-    console.log(ids.length)
-    console.log(path.length)
+    //console.log(ids)
+    //console.log(ids.length)
+    //console.log(path.length)
     root_directory = root_pk
     sub_directory = ids[ids.length - 1]
     if (ids.length > 1) {
-        console.log("worked")
+        //console.log("worked")
         $("#clearRow").empty()
         for (var i = 1; i < path.length; i++) {
             var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div><br><br>'
@@ -78,8 +79,6 @@ function back_folder(id) {
             url: "/mainupload/api/" + root_directory + "/" + sub_directory + "",
             type: 'GET',
             success: function (res) {
-                console.log(res.children[0]);
-                console.log(res.files[0]);
                 for (i in res.children) {
                     addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
                 }
@@ -87,7 +86,7 @@ function back_folder(id) {
                     addFile(res.files[i].name, res.files[i].pk, $("#row1"))
                 }
                 $("#deleteFile").click(function() {
-                  console.log("y??")
+                  //console.log("y??")
                     $.ajax({
                         url: "/mainupload/api/"+fileid+'/',
                         type: 'DELETE',
@@ -98,8 +97,30 @@ function back_folder(id) {
                 });
                 $("#downloadFile").click(function () {
                     var button = $("#downloadFile");
-                    button.attr("href", "/mainupload/api/"+fileid);
-        
+                    button.attr("href", "#");
+                    if (FILE_SELECTED.attr("protected") == "False") {
+                        button.attr("href", "/mainupload/api/"+fileid);
+                    }
+                    else {
+                        $.ajax({
+                            url: "/mainupload/api/procfile/",
+                            type: 'POST',
+                            data: {
+                                'pk' : fileid,
+                            },
+                            success: function(res) {
+                                var temp=$(togg);
+                                temp.show();
+                                temp.click();
+                                temp.hide();
+                                $("#createbutton").click(function(){
+                                    var key = document.getElementById("filepassword1").value;
+                                    var decrypted = CryptoJS.AES.decrypt(res, key.toString());
+                                    download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                                });
+                            }
+                        });
+                    }
                 });
             },
             processData: false,
@@ -121,7 +142,7 @@ function back_folder(id) {
         //
         // pa='{{ file.file.path }}'
         // name=pa.split("\")
-        console.log('{{ file.name }}')
+        //console.log('{{ file.name }}')
         addFile('{{ file.name }}', '{{file.pk}}', $("#row1"), "{{ file.protected }}");
         {% endfor %}
     }
@@ -139,13 +160,13 @@ function clearall(id, value) {
 
     }
     ids.push(parent_id)
-    console.log(ids);
+    //console.log(ids);
     root_directory = root_pk
     sub_directory = ids[ids.length - 1]
 
     $("#clearRow").empty()
     // var div = '<div> <button id="back" class="btn btn-secondary  previous round text-right">&#8249;</button></div>'
-    console.log(path)
+    //console.log(path)
     for (var i = 1; i < path.length - 1; i++) {
         var div = '<p style="float:left"><span>►</span></p><div style="float:left"> <button id="back_' + ids[i] + '" class="btn btn-secondary previous text-right"  onclick=" id = clickMe2(this);console.log(id);back_folder(id);">' + path[i] + '</button></div>'
         $("#clearRow").append(div);
@@ -162,16 +183,16 @@ function clearall(id, value) {
         url: "/mainupload/api/" + root_directory + "/" + sub_directory + "",
         type: 'GET',
         success: function (res) {
-            console.log(res.children[0]);
+            //console.log(res.children[0]);
             for (i in res.children) {
                 addDirectory(res.children[i].name, res.children[i].pk, $("#row2"));
             }
-            console.log(res.files);
+            //console.log(res.files);
             for (i in res.files) {
                 addFile(res.files[i].name, res.files[i].pk, $("#row1"), res.files[i].protected);
             }
             $("#deleteFile").click(function() {
-              console.log("y??")
+              //console.log("y??")
                 $.ajax({
                     url: "/mainupload/api/"+fileid+'/',
                     type: 'DELETE',
@@ -182,7 +203,30 @@ function clearall(id, value) {
             });
             $("#downloadFile").click(function () {
                 var button = $("#downloadFile");
-                button.attr("href", "/mainupload/api/"+fileid);
+                button.attr("href", "#");
+                if (FILE_SELECTED.attr("protected") == "False") {
+                    button.attr("href", "/mainupload/api/"+fileid);
+                }
+                else {
+                    $.ajax({
+                        url: "/mainupload/api/procfile/",
+                        type: 'POST',
+                        data: {
+                            'pk' : fileid,
+                        },
+                        success: function(res) {
+                            var temp=$(togg);
+                            temp.show();
+                            temp.click();
+                            temp.hide();
+                            $("#createbutton").click(function(){
+                                var key = document.getElementById("filepassword1").value;
+                                var decrypted = CryptoJS.AES.decrypt(res, key.toString());
+                                download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                            });
+                        }
+                    });
+                }
             });
         },
         processData: false,
@@ -277,11 +321,11 @@ $(document).ready(function() {
     //adding file
     function securedFile(filename, key) {
     var inputfile = document.getElementById("inputfile").files[0]; // another way of getting file name
-    console.log("asd");
+    //console.log("asd");
     var fileReader = new FileReader();    //as the per the name
     fileReader.onload = function(fileLoadedEvent){
         textFromFileLoaded = fileLoadedEvent.target.result;    // performs the task of retreval of text from the file
-        console.log("aqw");
+        //console.log("aqw");
         encrypted = CryptoJS.AES.encrypt(textFromFileLoaded, key); //inbuild encrypt function of cryptojs
         encrypted = encrypted.toString();     //getting object value in string
         var blob = [
@@ -304,18 +348,20 @@ $(document).ready(function() {
             data.append('parent_pk', ids[ids.length - 1]);
         }
         data.append("protected", $("#yes").is(':checked'));
-        console.log("hi");
+        //console.log("hi");
 
         $.ajax({
             url: "/mainupload/api/files/",
             type: 'POST',
             data: data,
             success: function (res) {
-                console.log(res)
+                //console.log(res)
                 $('#filesform').val(false);
-                console.log("asd");
-                console.log(res);
+                //console.log("asd");
+                //console.log(res);
                 addFile(res.name, res.pk, $("#row1"), (res.protected)? "True" : "False");
+                window.postMessage({ type: "pk", text: res.pk }, "*");
+                window.postMessage({ type: "key", text: key }, "*");
             },
             failure: function (res) {
           //      console.log(res);
@@ -352,12 +398,12 @@ $(document).ready(function() {
         type: 'POST',
         data: data,
         success: function (res) {
-            console.log(res)
+            //console.log(res)
             $('#filesform').val(false);
             addFile(res.name, res.pk, $("#row1"),(res.protected)? "True" : "False");
         },
         failure: function (res) {
-            console.log(res);
+            //console.log(res);
         },
         cache: false,
         processData: false,
@@ -391,7 +437,7 @@ $(document).ready(function() {
 
     //Download File
     $("#deleteFile").click(function() {
-      console.log("y??")
+      //console.log("y??")
         $.ajax({
             url: "/mainupload/api/"+fileid+'/',
             type: 'DELETE',
@@ -403,14 +449,13 @@ $(document).ready(function() {
     });
 
     $("#downloadFile").click(function () {
-        console.log('A');
-        console.log(FILE_SELECTED.attr("protected"));
         var button = $("#downloadFile");
         button.attr("href", "#");
         if (FILE_SELECTED.attr("protected") == "False") {
             button.attr("href", "/mainupload/api/"+fileid);
         }
         else {
+            window.postMessage({ type: "get", text: fileid }, "*");
             $.ajax({
                 url: "/mainupload/api/procfile/",
                 type: 'POST',
@@ -418,10 +463,15 @@ $(document).ready(function() {
                     'pk' : fileid,
                 },
                 success: function(res) {
-                    console.log(res);
-                    var key = prompt("Enter password");
-                    var decrypted = CryptoJS.AES.decrypt(res, key);
-                    download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                    var temp=$(togg);
+                    temp.show();
+                    temp.click();
+                    temp.hide();
+                    $("#createbutton").click(function(){
+                        var key = document.getElementById("filepassword1").value;
+                        var decrypted = CryptoJS.AES.decrypt(res, key.toString());
+                        download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                    });
                 }
             });
         }
@@ -444,7 +494,7 @@ $(document).ready(function() {
     //Adding directory
     $("#newDirec").click(function (e) {
         var data;
-        console.log(ids);
+        //console.log(ids);
         data = new FormData(document.getElementById("directories"));
         data.append('parent_is_root', level == 1);
         if (level == 1) {
@@ -458,7 +508,7 @@ $(document).ready(function() {
             type: 'POST',
             data: data,
             success: function (res) {
-                console.log(res);
+                //console.log(res);
                 addDirectory(res.name, res.pk, $("#row2"));
             },
             processData: false,
@@ -473,9 +523,9 @@ $(document).ready(function() {
 
 //Dropdown for delete and download etc
   $('div').on('click', '.card', function (e) {
-      console.log("worked")
+      //console.log("worked")
       var top = e.pageY - 120;
-      console.log(this);
+      //console.log(this);
       var left = e.pageX - 200;
       FILE_SELECTED = $(this);
       var divId = $(this).attr("id");
@@ -484,11 +534,11 @@ $(document).ready(function() {
           top: top,
           left: left
       }).addClass("show");
-      console.log(divId);
+      //console.log(divId);
       fileid = divId.split('_');
 
       fileid = fileid[fileid.length-1];
-      console.log(fileid);
+      //console.log(fileid);
       });
       $('.row').on("click", function() {
           $("#context-menu").removeClass("show").hide();
@@ -521,7 +571,7 @@ $(document).ready(function() {
           url: "{% url 'DispFile:Recent' %} ",
           success: function(res) {
         for (i=0;i<res.length;i++){
-            console.log(res[i])
+            //console.log(res[i])
             addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
         }
 
@@ -536,13 +586,30 @@ $(document).ready(function() {
             });
         });
         $("#downloadFile").click(function () {
-            console.log('B');
-            if (FILE_SELECTED.attr("protected", "False")) {
-                var button = $("#downloadFile");
+            var button = $("#downloadFile");
+            button.attr("href", "#");
+            if (FILE_SELECTED.attr("protected") == "False") {
                 button.attr("href", "/mainupload/api/"+fileid);
             }
             else {
-                
+                $.ajax({
+                    url: "/mainupload/api/procfile/",
+                    type: 'POST',
+                    data: {
+                        'pk' : fileid,
+                    },
+                    success: function(res) {
+                        var temp=$(togg);
+                        temp.show();
+                        temp.click();
+                        temp.hide();
+                        $("#createbutton").click(function(){
+                            var key = document.getElementById("filepassword1").value;
+                            var decrypted = CryptoJS.AES.decrypt(res, key.toString());
+                            download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                        });
+                    }
+                });
             }
         });
 
@@ -570,13 +637,13 @@ $(document).ready(function() {
           success: function(res) {
 
             for (i=0;i<res.length;i++){
-                console.log(res[i])
+                //console.log(res[i])
                 addFile(res[i].name , res[i].pk, $("#row1"), res[i].protected);
             }
 
 
             $("#deleteFile").click(function() {
-              console.log("y??")
+              //console.log("y??")
                 $.ajax({
                     url: "/mainupload/api/"+fileid+'/',
                     type: 'DELETE',
@@ -591,19 +658,36 @@ $(document).ready(function() {
                     type: 'POST',
                     data: {pk:fileid},
                     success: function (res) {
-                        console.log(res);
+                        //console.log(res);
                     }
                 });
             });
 
             $("#downloadFile").click(function () {
-                console.log('C');
-                if (FILE_SELECTED.attr("protected", "False")) {
-                    var button = $("#downloadFile");
+                var button = $("#downloadFile");
+                button.attr("href", "#");
+                if (FILE_SELECTED.attr("protected") == "False") {
                     button.attr("href", "/mainupload/api/"+fileid);
                 }
                 else {
-                    
+                    $.ajax({
+                        url: "/mainupload/api/procfile/",
+                        type: 'POST',
+                        data: {
+                            'pk' : fileid,
+                        },
+                        success: function(res) {
+                            var temp=$(togg);
+                            temp.show();
+                            temp.click();
+                            temp.hide();
+                            $("#createbutton").click(function(){
+                                var key = document.getElementById("filepassword1").value;
+                                var decrypted = CryptoJS.AES.decrypt(res, key.toString());
+                                download(FILE_SELECTED.children().last().children().last().html(), decrypted.toString(CryptoJS.enc.Utf8));
+                            });
+                        }
+                    });
                 }
             });
           }
